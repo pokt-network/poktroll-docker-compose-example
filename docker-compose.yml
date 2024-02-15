@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  celestia-da:
+    image: "ghcr.io/rollkit/celestia-da:${CELESTIA_DA_VERSION}" # Keep track of versions here: https://github.com/rollkit/celestia-da/releases
+    command:
+      - /bin/celestia-da
+      - light
+      - start
+      - "--node.store=/home/celestia/.celestia-bridge-mocha"
+      - "--core.ip=rpc-mocha.pops.one"
+      - "--p2p.network=mocha"
+      - "--da.grpc.namespace=${POKTROLL_NAMESPACE}"
+      - "--da.grpc.listen=0.0.0.0:26650"
+    volumes:
+      - ./celestia-da:/home/celestia/.celestia-bridge-mocha
+    ports:
+      - "26650:26650"
+    user: "10001:10001"
+
+  celestia-da-init:
+    image: "ghcr.io/rollkit/celestia-da:${CELESTIA_DA_VERSION}" # Use the same image for init process
+    command:
+      - /bin/celestia-da
+      - light
+      - init
+      - "--node.store=/home/celestia/.celestia-bridge-mocha"
+    volumes:
+      - ./celestia-da:/home/celestia/.celestia-bridge-mocha
+    user: "10001:10001"
+
+  poktrolld:
+    image: ${POKTROLLD_IMAGE_REPO}:#{POKTROLLD_IMAGE_TAG}
+    command:
+      - poktrolld
+      - start
+      - --home=/root/.pocket/
+      - --rollkit.block_time=60s
+      - --rollkit.da_address=celestia-da:26650
+      - --rollkit.da_start_height=${DA_START_HEIGHT}
+      - --rollkit.light=false
+      - --rpc.laddr=tcp://0.0.0.0:36657
+      - --p2p.laddr=0.0.0.0:26656
+      - --p2p.external-address=${NODE_HOSTNAME}:26656
+      - --grpc.address=0.0.0.0:36658
+      - --log_level=info
+      - --p2p.seeds=#{SEEDS}
+    ports:
+      - "36657:36657"
+      - "36658:36658"
+      - "26656:26656"
+    depends_on:
+      - init-priv-validator-state
+      - celestia-da
+    volumes:
+      - ./poktrolld-data:/root/.pocket/
+
+  init-priv-validator-state:
+    image: busybox
+    command:
+      [
+        'sh',
+        '-c',
+        'if [ ! -f /root/.pocket/data/priv_validator_state.json ]; then echo "{\"height\": \"0\", \"round\": 0, \"step\": 0}" > /root/.pocket/data/priv_validator_state.json; fi'
+      ]
+    volumes:
+      - ./poktrolld-data:/root/.pocket/

@@ -1,0 +1,8 @@
+poktrolld-data/data
+poktrolld-data/config/genesis.json
+poktrolld-data/config/node_key.json
+poktrolld-data/config/priv_validator_key.json
+celestia-da/keys
+celestia-da/data
+celestia-da/lock
+.env
