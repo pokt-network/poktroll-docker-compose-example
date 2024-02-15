@@ -30,15 +30,13 @@ services:
     user: "10001:10001"
 
   poktrolld:
-    image: ${POKTROLLD_IMAGE_REPO}:#{POKTROLLD_IMAGE_TAG}
+    image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG}
     command:
       - poktrolld
       - start
       - --home=/root/.pocket/
-      - --rollkit.block_time=60s
       - --rollkit.da_address=celestia-da:26650
       - --rollkit.da_start_height=${DA_START_HEIGHT}
-      - --rollkit.light=false
       - --rpc.laddr=tcp://0.0.0.0:36657
       - --p2p.laddr=0.0.0.0:26656
       - --p2p.external-address=${NODE_HOSTNAME}:26656
