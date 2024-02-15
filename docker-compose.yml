@@ -42,7 +42,7 @@ services:
       - --p2p.external-address=${NODE_HOSTNAME}:26656
       - --grpc.address=0.0.0.0:36658
       - --log_level=info
-      - --p2p.seeds=#{SEEDS}
+      - --p2p.seeds=${SEEDS}
     ports:
       - "36657:36657"
       - "36658:36658"
