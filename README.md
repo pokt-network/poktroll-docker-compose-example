@@ -46,6 +46,12 @@ Edit the .env file with the following details:
 
 ### 4. Launch the Node
 
+Before starting, adjust permissions for the Celestia DA container:
+
+```bash
+chown -R 10001:10001 celestia-da
+```
+
 Initiate the node with:
 
 ```bash
@@ -56,3 +62,5 @@ Monitor node activity through logs with:
 ```bash
 docker-compose logs -f poktrolld
 ```
+
+Note: During the synchronization of the Celestia DA node, errors like syncing in progress: localHeadHeight: 51201, requestedHeight: 1129201; are expected.
