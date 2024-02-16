@@ -12,6 +12,12 @@ services:
       - "--p2p.network=mocha"
       - "--da.grpc.namespace=${POKTROLL_NAMESPACE}"
       - "--da.grpc.listen=0.0.0.0:26650"
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "nc", "-z", "localhost", "26650" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     volumes:
       - ./celestia-da:/home/celestia/.celestia-bridge-mocha
     ports:
@@ -25,6 +31,7 @@ services:
       - light
       - init
       - "--node.store=/home/celestia/.celestia-bridge-mocha"
+    restart: no
     volumes:
       - ./celestia-da:/home/celestia/.celestia-bridge-mocha
     user: "10001:10001"
@@ -47,19 +54,23 @@ services:
       - "36657:36657"
       - "36658:36658"
       - "26656:26656"
+    restart: unless-stopped
     depends_on:
-      - init-priv-validator-state
-      - celestia-da
+      init-priv-validator-state:
+        condition: service_completed_successfully
+      celestia-da:
+        condition: service_healthy
     volumes:
       - ./poktrolld-data:/root/.pocket/
 
   init-priv-validator-state:
     image: busybox
+    restart: no
     command:
       [
         'sh',
         '-c',
-        'if [ ! -f /root/.pocket/data/priv_validator_state.json ]; then echo "{\"height\": \"0\", \"round\": 0, \"step\": 0}" > /root/.pocket/data/priv_validator_state.json; fi'
+        'if [ ! -f /root/.pocket/data/priv_validator_state.json ]; then echo "{\"height\": \"0\", \"round\": 0, \"step\": 0}" > /root/.pocket/data/priv_validator_state.json; fi; chmod -R 777 /root/.pocket/data/'
       ]
     volumes:
       - ./poktrolld-data:/root/.pocket/
