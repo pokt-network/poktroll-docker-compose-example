@@ -44,6 +44,7 @@ services:
       - --home=/root/.pocket/
       - --rollkit.da_address=celestia-da:26650
       - --rollkit.da_start_height=${DA_START_HEIGHT}
+      - --rollkit.da_namespace=000000000000000000000000000000000000000000${POKTROLL_NAMESPACE}
       - --rpc.laddr=tcp://0.0.0.0:36657
       - --p2p.laddr=0.0.0.0:26656
       - --p2p.external-address=${NODE_HOSTNAME}:26656
