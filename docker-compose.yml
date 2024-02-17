@@ -71,7 +71,7 @@ services:
       [
         'sh',
         '-c',
-        'if [ ! -f /root/.pocket/data/priv_validator_state.json ]; then echo "{\"height\": \"0\", \"round\": 0, \"step\": 0}" > /root/.pocket/data/priv_validator_state.json; fi; chmod -R 777 /root/.pocket/data/'
+        'mkdir -p /root/.pocket/data/; if [ ! -f /root/.pocket/data/priv_validator_state.json ]; then echo "{\"height\": \"0\", \"round\": 0, \"step\": 0}" > /root/.pocket/data/priv_validator_state.json; fi; chmod -R 777 /root/.pocket/data/'
       ]
     volumes:
       - ./poktrolld-data:/root/.pocket/
