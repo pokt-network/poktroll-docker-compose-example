@@ -31,7 +31,7 @@ services:
       - light
       - init
       - "--node.store=/home/celestia/.celestia-bridge-mocha"
-    restart: no
+    restart: 'no'
     volumes:
       - ./celestia-da:/home/celestia/.celestia-bridge-mocha
     user: "10001:10001"
@@ -66,7 +66,7 @@ services:
 
   init-priv-validator-state:
     image: busybox
-    restart: no
+    restart: 'no'
     command:
       [
         'sh',
