@@ -49,7 +49,7 @@ services:
       - --p2p.laddr=0.0.0.0:26656
       - --p2p.external-address=${NODE_HOSTNAME}:26656
       - --grpc.address=0.0.0.0:36658
-      - --log_level=info
+      - --log_level=${POKTROLLD_LOG_LEVEL}
       - --p2p.seeds=${SEEDS}
     ports:
       - "36657:36657"
