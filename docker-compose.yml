@@ -1,41 +1,6 @@
 version: '3.8'
 
 services:
-  celestia-da:
-    image: "ghcr.io/rollkit/celestia-da:${CELESTIA_DA_VERSION}" # Keep track of versions here: https://github.com/rollkit/celestia-da/releases
-    command:
-      - /bin/celestia-da
-      - light
-      - start
-      - "--node.store=/home/celestia/.celestia-bridge-mocha"
-      - "--core.ip=rpc-mocha.pops.one"
-      - "--p2p.network=mocha"
-      - "--da.grpc.namespace=${POKTROLL_NAMESPACE}"
-      - "--da.grpc.listen=0.0.0.0:26650"
-    restart: unless-stopped
-    healthcheck:
-      test: [ "CMD", "nc", "-z", "localhost", "26650" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    volumes:
-      - ./celestia-da:/home/celestia/.celestia-bridge-mocha
-    ports:
-      - "26650:26650"
-    user: "10001:10001"
-
-  celestia-da-init:
-    image: "ghcr.io/rollkit/celestia-da:${CELESTIA_DA_VERSION}" # Use the same image for init process
-    command:
-      - /bin/celestia-da
-      - light
-      - init
-      - "--node.store=/home/celestia/.celestia-bridge-mocha"
-    restart: 'no'
-    volumes:
-      - ./celestia-da:/home/celestia/.celestia-bridge-mocha
-    user: "10001:10001"
-
   poktrolld:
     image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG}
     command:
@@ -59,8 +24,6 @@ services:
     depends_on:
       init-priv-validator-state:
         condition: service_completed_successfully
-      celestia-da:
-        condition: service_healthy
     volumes:
       - ./poktrolld-data:/root/.pocket/
 

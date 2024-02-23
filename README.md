@@ -18,39 +18,27 @@ git clone https://github.com/pokt-network/poktroll-docker-compose-example.git
 cd poktroll-docker-compose-example
 ```
 
-### 2. Download Network Genesis and Metadata
+### 2. Download Network Genesis
 
 The Poktrolld blockchain deploys various networks (e.g., testnets, mainnet). Access the list of Poktrolld networks available for community participation here: [Poktrolld Networks](https://github.com/pokt-network/pocket-network-genesis/tree/master/poktrolld).
 
-Each network provides two essential files:
-- `.json` — a `genesis.json` file.
-- `.txt` - file containing metadata required for operating a full node (will be used in the next step).
-
-Place genesis.json in the poktrolld/config directory using the following command for the public-testnet network:
+Download and place the genesis.json for your chosen network (e.g., public-testnet) into the poktrolld/config directory:
 
 ```bash
-curl https://raw.githubusercontent.com/pokt-network/pocket-network-genesis/master/poktrolld/public-testnet.json > poktrolld-data/config/genesis.json
+NETWORK_NAME=public-testnet curl https://raw.githubusercontent.com/pokt-network/pocket-network-genesis/master/poktrolld/${NETWORK_NAME}.json > poktrolld-data/config/genesis.json
 ```
 
 ### 3. Configure Environment Variables
 
-Duplicate the sample environment file and name it `.env`:
+Create and configure your `.env` file from the sample:
 
 ```bash
 cp .env.sample .env
 ```
 
-Edit the .env file with the following details:
-1. `NODE_HOSTNAME` should match the IP address or hostname of your full node for network discovery purposes.
-2. Obtain `POKTROLL_NAMESPACE`, `DA_START_HEIGHT`, and `SEEDS` from the `.txt` metadata file mentioned previously.
+Update `NODE_HOSTNAME` in `.env` to the IP address or hostname of your node.
 
 ### 4. Launch the Node
-
-Before starting, adjust permissions for the Celestia DA container:
-
-```bash
-chown -R 10001:10001 celestia-da
-```
 
 Initiate the node with:
 
@@ -59,8 +47,8 @@ docker-compose up -d
 ```
 
 Monitor node activity through logs with:
+
 ```bash
-docker-compose logs -f poktrolld
+docker-compose logs -f
 ```
 
-Note: During the synchronization of the Celestia DA node, errors like syncing in progress: localHeadHeight: 51201, requestedHeight: 1129201; are expected.
