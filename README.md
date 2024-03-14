@@ -17,7 +17,6 @@
   - [2. Configure AppGate Server and environment variables](#2-configure-appgate-server-and-environment-variables)
   - [3. Prepare and run AppGate Server containers](#3-prepare-and-run-appgate-server-containers)
 
-
 ## Deploying a Full Node
 
 ### 0. Prerequisites
@@ -75,11 +74,11 @@ docker-compose logs -f
 ### 0. Prerequisites
 
 - Full Node. This Relay Miner deployment guide assumes the Full Node is deployed [in the same docker-compose stack](#deploying-a-full-node).
-- A poktroll account with uPOKT tokens. Tokens can be ackquired by contacting the team. We plan to add faucet for public testnet. You are going to need a BIP39 mnemonic phrase for your account. 
+- A poktroll account with uPOKT tokens. Tokens can be acquired by contacting the team. We plan to add a faucet for public testnet. You are going to need a BIP39 mnemonic phrase for your account. 
 
 ### 1. Stake your supplier
 
-Assuming the account you're planning to use for Relay Miner is already available in your local Keyring (can check with `poktrolld keys list`), create a supplier stake config and run stake command. [This documentation page](https://dev.poktroll.com/configs/supplier_staking_config) explains what supplier staking config is and how it can be used. This command can be used as an example:
+Assuming the account you're planning to use for Relay Miner is already available in your local Keyring (can check with `poktrolld keys list`), create a supplier stake config and run the stake command. [This documentation page](https://dev.poktroll.com/configs/supplier_staking_config) explains what supplier staking config is and how it can be used. This command can be used as an example:
 
 ```bash
 poktrolld --keyring-backend=test --node=http://YOUR_FULL_NODE_ADDRESS:26657/ tx supplier stake-supplier --config=./supplier_stake_config_example.yaml --from=YOUR_KEY_NAME
@@ -87,10 +86,9 @@ poktrolld --keyring-backend=test --node=http://YOUR_FULL_NODE_ADDRESS:26657/ tx 
 
 ### 2. Configure RelayMiner and environment variables
 
-Using [RelayMiner config](https://dev.poktroll.com/configs/relayminer_config) documentation as a reference, change [relayminer_config.yaml](./relayminer-example/config/relayminer_config.yaml) configuration file.
+Using [RelayMiner config](https://dev.poktroll.com/configs/relayminer_config) documentation as a reference, change the [relayminer_config.yaml](./relayminer-example/config/relayminer_config.yaml) configuration file.
 
-Also, change the value of `RELAYMINER_MNEMONIC` in `.env` file. The value should be a BIP39 mnemonic phrase of the account you're planning to use for RelayMiner.
-
+Also, change the value of `RELAYMINER_MNEMONIC` in the `.env` file. The value should be a BIP39 mnemonic phrase of the account you're planning to use for RelayMiner.
 
 ### 3. Prepare and run RelayMiner containers
 
@@ -112,11 +110,11 @@ docker-compose logs -f relayminer-example
 ### 0. Prerequisites
 
 - Full Node. This AppGate Server deployment guide assumes the Full Node is deployed [in the same docker-compose stack](#deploying-a-full-node).
-- A poktroll account with uPOKT tokens. Tokens can be ackquired by contacting the team. We plan to add faucet for public testnet. You are going to need a BIP39 mnemonic phrase for your account. 
+- A poktroll account with uPOKT tokens. Tokens can be acquired by contacting the team. We plan to add a faucet for public testnet. You are going to need a BIP39 mnemonic phrase for your account. 
 
 ### 1. Stake your application
 
-Assuming the account you're planning to use for AppGate Server is already available in your local Keyring (can check with `poktrolld keys list`), create an application stake config and run stake command. [This documentation page](https://dev.poktroll.com/configs/app_staking_config) explains what application staking config is and how it can be used. This command can be used as an example:
+Assuming the account you're planning to use for AppGate Server is already available in your local Keyring (can check with `poktrolld keys list`), create an application stake config and run the stake command. [This documentation page](https://dev.poktroll.com/configs/app_staking_config) explains what application staking config is and how it can be used. This command can be used as an example:
 
 ```bash
 poktrolld --keyring-backend=test --node=http://YOUR_FULL_NODE_ADDRESS:26657/ tx application stake-application --config=./application_stake_config_example.yaml --from=YOUR_KEY_NAME
@@ -124,9 +122,9 @@ poktrolld --keyring-backend=test --node=http://YOUR_FULL_NODE_ADDRESS:26657/ tx 
 
 ### 2. Configure AppGate Server and environment variables
 
-Using [AppGate Server config](https://dev.poktroll.com/configs/appgate_server_config) documentation as a reference, change [appgate_config.yaml](./appgate-server-example/config/appgate_config.yaml) configuration file.
+Using [AppGate Server config](https://dev.poktroll.com/configs/appgate_server_config) documentation as a reference, change the [appgate_config.yaml](./appgate-server-example/config/appgate_config.yaml) configuration file.
 
-Also, change the value of `APPGATE_SERVER_MNEMONIC` in `.env` file. The value should be a BIP39 mnemonic phrase of the account you're planning to use for AppGate Server.
+Also, change the value of `APPGATE_SERVER_MNEMONIC` in the `.env` file. The value should be a BIP39 mnemonic phrase of the account you're planning to use for AppGate Server.
 
 ### 3. Prepare and run AppGate Server containers
 
