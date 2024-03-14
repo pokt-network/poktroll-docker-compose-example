@@ -1,0 +1,23 @@
+# Please refer to https://dev.poktroll.com/configs/relayminer_config for documentation.
+signing_key_name: key-for-relayminer1
+smt_store_path: smt_stores
+pocket_node:
+  query_node_rpc_url: tcp://poktrolld:26657
+  query_node_grpc_url: tcp://poktrolld:26658
+  tx_node_rpc_url: tcp://poktrolld:26657
+proxies:
+  - proxy_name: http-proxy
+    type: http
+    host: 0.0.0.0:8545
+suppliers:
+  - service_id: etherium
+    type: http
+    service_config:
+      url: https://eth-mainnet.rpc.grove.city/v1/765112fe
+    proxy_names:
+      - http-proxy
+    hosts:
+      - tcp://bhs.kdas.me:8545
+metrics:
+  enabled: true
+  addr: :9090

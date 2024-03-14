@@ -1,68 +1,87 @@
 version: '3.8'
 
 services:
-  celestia-da:
-    image: "ghcr.io/rollkit/celestia-da:${CELESTIA_DA_VERSION}" # Keep track of versions here: https://github.com/rollkit/celestia-da/releases
-    command:
-      - /bin/celestia-da
-      - light
-      - start
-      - "--node.store=/home/celestia/.celestia-bridge-mocha"
-      - "--core.ip=rpc-mocha.pops.one"
-      - "--p2p.network=mocha"
-      - "--da.grpc.namespace=${POKTROLL_NAMESPACE}"
-      - "--da.grpc.listen=0.0.0.0:26650"
-    restart: unless-stopped
-    healthcheck:
-      test: [ "CMD", "nc", "-z", "localhost", "26650" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    volumes:
-      - ./celestia-da:/home/celestia/.celestia-bridge-mocha
-    ports:
-      - "26650:26650"
-    user: "10001:10001"
-
-  celestia-da-init:
-    image: "ghcr.io/rollkit/celestia-da:${CELESTIA_DA_VERSION}" # Use the same image for init process
-    command:
-      - /bin/celestia-da
-      - light
-      - init
-      - "--node.store=/home/celestia/.celestia-bridge-mocha"
-    restart: 'no'
-    volumes:
-      - ./celestia-da:/home/celestia/.celestia-bridge-mocha
-    user: "10001:10001"
-
+  # Full node
   poktrolld:
     image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG}
+    entrypoint: [poktrolld]
     command:
-      - poktrolld
       - start
-      - --home=/root/.pocket/
-      - --rollkit.da_address=celestia-da:26650
-      - --rollkit.da_start_height=${DA_START_HEIGHT}
-      - --rollkit.da_namespace=000000000000000000000000000000000000000000${POKTROLL_NAMESPACE}
-      - --rpc.laddr=tcp://0.0.0.0:36657
-      - --p2p.laddr=0.0.0.0:26656
-      - --p2p.external-address=${NODE_HOSTNAME}:26656
-      - --grpc.address=0.0.0.0:36658
+      - --home=/root/.poktroll/
+      - --rpc.laddr=tcp://0.0.0.0:26657
+      - --p2p.laddr=0.0.0.0:26659
+      - --p2p.external-address=${NODE_HOSTNAME}:26659
+      - --grpc.address=0.0.0.0:26658
       - --log_level=${POKTROLLD_LOG_LEVEL}
       - --p2p.seeds=${SEEDS}
     ports:
-      - "36657:36657"
-      - "36658:36658"
-      - "26656:26656"
+      - "26657:26657"
+      - "26658:26658"
+      - "26659:26659"
     restart: unless-stopped
     depends_on:
       init-priv-validator-state:
         condition: service_completed_successfully
-      celestia-da:
-        condition: service_healthy
     volumes:
-      - ./poktrolld-data:/root/.pocket/
+      - ./poktrolld-data:/root/.poktroll/
+
+  # Before enabling Relay Miner, make sure to add the mnemonic to `RELAYMINER_MNEMONIC` variable in .env.
+  # 
+  # # Relay Miner
+  # relayminer-example:
+  #   image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG}
+  #   entrypoint: [poktrolld]
+  #   command:
+  #     - relayminer
+  #     - --home=/root/.poktroll/
+  #     - --keyring-backend=test
+  #     - --config=/root/.poktroll/config/relayminer_config.yaml
+  #   ports:
+  #     # 8545 is the port RelayMiner is configured to listen on in `relayminer_config.yaml`.
+  #     - "8545:8545"
+  #   restart: unless-stopped
+  #   volumes:
+  #     - ./relayminer-example:/root/.poktroll/
+  # 
+  # # A container that imports the key for Relay Miner. Beware, the CLI fails on subsequent runs (but succeeds on first)
+  # relayminer-mnemonic-import:
+  #   image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG}
+  #   entrypoint: sh -c
+  #   command: >
+  #     "echo \"${APPGATE_SERVER_MNEMONIC}\" |
+  #     poktrolld --keyring-backend=test --home=/root/.poktroll/ keys add key-for-appgateserver --recover"
+  #   restart: "no"
+  #   volumes:
+  #     - ./appgate-server-example:/root/.poktroll/
+
+  # Before nabling AppGate Server, make sure to add the mnemonic to `APPGATE_SERVER_MNEMONIC` variable in .env.
+  # 
+  # # AppGate Server
+  # appgate-server-example:
+  #   image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG}
+  #   entrypoint: [poktrolld]
+  #   command:
+  #     - appgate-server
+  #     - --home=/root/.poktroll/
+  #     - --keyring-backend=test
+  #     - --config=/root/.poktroll/config/appgate_config.yaml
+  #   ports:
+  #     # 85 is the port AppGate Server is configured to listen on in `relayminer_config.yaml`.
+  #     - "85:85"
+  #   restart: unless-stopped
+  #   volumes:
+  #     - ./appgate-server-example:/root/.poktroll/
+  #
+  # # A container that imports the key for AppGate Server. Beware, the CLI fails on subsequent runs (but succeeds on first)
+  # appgate-server-mnemonic-import:
+  #   image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG}
+  #   entrypoint: sh -c
+  #   command: >
+  #     "echo \"${APPGATE_SERVER_MNEMONIC}\" |
+  #     poktrolld --keyring-backend=test --home=/root/.poktroll/ keys add key-for-appgateserver --recover"
+  #   restart: "no"
+  #   volumes:
+  #     - ./appgate-server-example:/root/.poktroll/
 
   init-priv-validator-state:
     image: busybox
@@ -71,7 +90,7 @@ services:
       [
         'sh',
         '-c',
-        'mkdir -p /root/.pocket/data/; if [ ! -f /root/.pocket/data/priv_validator_state.json ]; then echo "{\"height\": \"0\", \"round\": 0, \"step\": 0}" > /root/.pocket/data/priv_validator_state.json; fi; chmod -R 777 /root/.pocket/data/'
+        'mkdir -p /root/.poktroll/data/; if [ ! -f /root/.poktroll/data/priv_validator_state.json ]; then echo "{\"height\": \"0\", \"round\": 0, \"step\": 0}" > /root/.poktroll/data/priv_validator_state.json; fi; chmod -R 777 /root/.poktroll/data/'
       ]
     volumes:
-      - ./poktrolld-data:/root/.pocket/
+      - ./poktrolld-data:/root/.poktroll/

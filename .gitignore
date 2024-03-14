@@ -2,7 +2,16 @@ poktrolld-data/data
 poktrolld-data/config/genesis.json
 poktrolld-data/config/node_key.json
 poktrolld-data/config/priv_validator_key.json
+poktrolld-data/config/addrbook.json
+poktrolld-data/config/write-file-atomic/*
 celestia-da/keys
 celestia-da/data
 celestia-da/lock
+relayminer-example/config/app.toml
+relayminer-example/config/client.toml
+relayminer-example/config/config.toml
+appgate-server-example/config/app.toml
+appgate-server-example/config/client.toml
+appgate-server-example/config/config.toml
 .env
+*/keyring-test/*
