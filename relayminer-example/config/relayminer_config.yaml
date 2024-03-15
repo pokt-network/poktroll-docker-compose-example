@@ -13,11 +13,11 @@ suppliers:
   - service_id: etherium
     type: http
     service_config:
-      url: https://eth-mainnet.rpc.grove.city/v1/765112fe
+      url: "" # Etherium RPC endpoint to forward relays to
     proxy_names:
       - http-proxy
     hosts:
-      - tcp://bhs.kdas.me:8545
+      - http://YOUR_NODE_IP_OR_HOST:8545
 metrics:
   enabled: true
   addr: :9090
