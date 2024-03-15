@@ -16,6 +16,7 @@
   - [1. Stake your application](#1-stake-your-application)
   - [2. Configure AppGate Server and environment variables](#2-configure-appgate-server-and-environment-variables)
   - [3. Prepare and run AppGate Server containers](#3-prepare-and-run-appgate-server-containers)
+  - [4. Send a relay](#4-send-a-relay)
 
 ## Deploying a Full Node
 
@@ -71,6 +72,8 @@ docker-compose logs -f
 
 ## Deploying a Relay Miner
 
+Relay Miner provides to offer service on Pocket Network.
+
 ### 0. Prerequisites
 
 - Full Node. This Relay Miner deployment guide assumes the Full Node is deployed [in the same docker-compose stack](#deploying-a-full-node).
@@ -107,6 +110,8 @@ docker-compose logs -f relayminer-example
 
 ## Deploying an AppGate Server
 
+AppGate Server allows to use services provided by other operators on Pocket Network.
+
 ### 0. Prerequisites
 
 - Full Node. This AppGate Server deployment guide assumes the Full Node is deployed [in the same docker-compose stack](#deploying-a-full-node).
@@ -139,4 +144,18 @@ Check logs and confirm the node works as expected:
 
 ```bash
 docker-compose logs -f appgate-server-example
+```
+### 4. Send a relay
+
+You can send requests to the newly deployed AppGate Server. If there are any suppliers on the network that can provide the service,
+the request will be routed to them.
+
+The endpoint you want to send request to is: `http://your_node:appgate_server_port/service_id`. For example, this is how the request can be routed to `etherium` service id:
+
+```bash
+❯ curl http://my-node:85/etherium \
+  -X POST \
+  -H "Content-Type: application/json" \
+  --data '{"method":"eth_blockNumber","params":[],"id":1,"jsonrpc":"2.0"}'
+{"jsonrpc":"2.0","id":1,"result":"0x1289571"}
 ```
