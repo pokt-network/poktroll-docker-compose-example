@@ -43,7 +43,7 @@ The Poktrolld blockchain deploys various networks (e.g., testnets, mainnet). Acc
 Download and place the genesis.json for your chosen network (e.g., `testnet-validated`) into the poktrolld/config directory:
 
 ```bash
-NETWORK_NAME=testnet-validated curl https://raw.githubusercontent.com/pokt-network/pocket-network-genesis/master/poktrolld/${NETWORK_NAME}.json > poktrolld-data/config/genesis.json
+curl https://raw.githubusercontent.com/pokt-network/pocket-network-genesis/master/poktrolld/testnet-validated.json > poktrolld-data/config/genesis.json
 ```
 
 ### 3. Configure Environment Variables
