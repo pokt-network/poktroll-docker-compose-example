@@ -1,5 +1,6 @@
 # Poktrolld Docker-Compose Example <!-- omit in toc -->
 
+- [Unrestanding Shannon upgrade actors](#unrestanding-shannon-upgrade-actors)
 - [Deploying a Full Node](#deploying-a-full-node)
   - [0. Prerequisites](#0-prerequisites)
   - [1. Clone the Repository](#1-clone-the-repository)
@@ -17,6 +18,16 @@
   - [2. Configure AppGate Server and environment variables](#2-configure-appgate-server-and-environment-variables)
   - [3. Prepare and run AppGate Server containers](#3-prepare-and-run-appgate-server-containers)
   - [4. Send a relay](#4-send-a-relay)
+
+## Unrestanding Shannon upgrade actors
+
+If you're coming from Pocket Network Mainnet - Morse, you might be confused about why we have multiple node types. In the next Pocket Network update - Shannon - we separated the "supplier" from a "full node".
+
+In Morse, a validator or a full node was responsible for holding blockchain data and performing relays. In Shannon, RelayMiner - software that runs the supplier logic, is separated from the full-node/validator.
+
+Additionally, we provide an AppGate Server - software that provides access to Pocket Network suppliers. Applications and Gateways will find it beneficial.
+
+More information can be found in [Shannon actors documentation](https://dev.poktroll.com/actors).
 
 ## Deploying a Full Node
 
