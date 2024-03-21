@@ -21,13 +21,13 @@
 
 ## Unrestanding Shannon upgrade actors
 
-If you're coming from Pocket Network Mainnet - Morse, you might be confused about why we have multiple node types. In the next Pocket Network update - Shannon - we separated the "supplier" from a "full node".
+For those familiar with Pocket Network Mainnet - Morse, the introduction of multiple node types in the upcoming Shannon upgrade may require some explanation. In Shannon, the "supplier" role is separated from the "full node" role.
 
-In Morse, a validator or a full node was responsible for holding blockchain data and performing relays. In Shannon, RelayMiner - software that runs the supplier logic, is separated from the full-node/validator.
+In Morse (current Pocket Network mainnet), a validator or a full node was responsible for both holding blockchain data and performing relays. With Shannon, the RelayMiner software, which runs the supplier logic, is distinct from the full-node/validator.
 
-Additionally, we provide an AppGate Server - software that provides access to Pocket Network suppliers. Applications and Gateways will find it beneficial.
+Furthermore, Shannon introduces the AppGate Server, a software component that provides access to Pocket Network suppliers. This addition will be beneficial for both Applications and Gateways.
 
-More information can be found in [Shannon actors documentation](https://dev.poktroll.com/actors).
+For more details, please refer to the [Shannon actors documentation](https://dev.poktroll.com/actors).
 
 ## Deploying a Full Node
 
