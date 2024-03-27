@@ -1,6 +1,6 @@
 # Poktrolld Docker-Compose Example <!-- omit in toc -->
 
-- [Unrestanding Shannon upgrade actors](#unrestanding-shannon-upgrade-actors)
+- [Understanding Shannon upgrade actors](#understanding-shannon-upgrade-actors)
 - [Deploying a Full Node](#deploying-a-full-node)
   - [0. Prerequisites](#0-prerequisites)
   - [1. Clone the Repository](#1-clone-the-repository)
@@ -19,7 +19,7 @@
   - [3. Prepare and run AppGate Server containers](#3-prepare-and-run-appgate-server-containers)
   - [4. Send a relay](#4-send-a-relay)
 
-## Unrestanding Shannon upgrade actors
+## Understanding Shannon upgrade actors
 
 For those familiar with Pocket Network Mainnet - Morse, the introduction of multiple node types in the upcoming Shannon upgrade may require some explanation. In Shannon, the "supplier" role is separated from the "full node" role.
 
@@ -83,7 +83,7 @@ docker-compose logs -f
 
 ## Deploying a Relay Miner
 
-Relay Miner provides to offer service on Pocket Network.
+Relay Miner provides services to offer on the Pocket Network.
 
 ### 0. Prerequisites
 
@@ -95,7 +95,7 @@ Relay Miner provides to offer service on Pocket Network.
 Assuming the account you're planning to use for Relay Miner is already available in your local Keyring (can check with `poktrolld keys list`), create a supplier stake config and run the stake command. [This documentation page](https://dev.poktroll.com/configs/supplier_staking_config) explains what supplier staking config is and how it can be used. This command can be used as an example:
 
 ```bash
-poktrolld --keyring-backend=test --node=http://YOUR_FULL_NODE_ADDRESS:26657/ tx supplier stake-supplier --config=./supplier_stake_config_example.yaml --from=YOUR_KEY_NAME
+poktrolld --keyring-backend=test --node=http://YOUR_FULL_NODE_ADDRESS:26657/ tx supplier stake-supplier --config=./supplier_stake_config_example.yaml --from=YOUR_KEY_NAME --chain-id poktroll
 ```
 
 ### 2. Configure RelayMiner and environment variables
@@ -133,7 +133,7 @@ AppGate Server allows to use services provided by other operators on Pocket Netw
 Assuming the account you're planning to use for AppGate Server is already available in your local Keyring (can check with `poktrolld keys list`), create an application stake config and run the stake command. [This documentation page](https://dev.poktroll.com/configs/app_staking_config) explains what application staking config is and how it can be used. This command can be used as an example:
 
 ```bash
-poktrolld --keyring-backend=test --node=http://YOUR_FULL_NODE_ADDRESS:26657/ tx application stake-application --config=./application_stake_config_example.yaml --from=YOUR_KEY_NAME
+poktrolld --keyring-backend=test --node=http://YOUR_FULL_NODE_ADDRESS:26657/ tx application stake-application --config=./application_stake_config_example.yaml --from=YOUR_KEY_NAME --chain-id poktroll
 ```
 
 ### 2. Configure AppGate Server and environment variables
@@ -164,7 +164,7 @@ the request will be routed to them.
 The endpoint you want to send request to is: `http://your_node:appgate_server_port/service_id`. For example, this is how the request can be routed to `etherium` service id:
 
 ```bash
-❯ curl http://my-node:85/etherium \
+❯ curl http://my-node:85/0021 \
   -X POST \
   -H "Content-Type: application/json" \
   --data '{"method":"eth_blockNumber","params":[],"id":1,"jsonrpc":"2.0"}'
