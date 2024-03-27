@@ -48,13 +48,13 @@ services:
   #   image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG}
   #   entrypoint: sh -c
   #   command: >
-  #     "echo \"${APPGATE_SERVER_MNEMONIC}\" |
-  #     poktrolld --keyring-backend=test --home=/root/.poktroll/ keys add key-for-appgateserver --recover"
+  #     "echo \"${RELAYMINER_MNEMONIC}\" |
+  #     poktrolld --keyring-backend=test --home=/root/.poktroll/ keys add key-for-relayminer1 --recover"
   #   restart: "no"
   #   volumes:
-  #     - ./appgate-server-example:/root/.poktroll/
+  #     - ./relayminer-example:/root/.poktroll/
 
-  # Before nabling AppGate Server, make sure to add the mnemonic to `APPGATE_SERVER_MNEMONIC` variable in .env.
+  # Before enabling AppGate Server, make sure to add the mnemonic to `APPGATE_SERVER_MNEMONIC` variable in .env.
   # 
   # # AppGate Server
   # appgate-server-example:
