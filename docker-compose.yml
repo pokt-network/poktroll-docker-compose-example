@@ -1,6 +1,17 @@
 version: '3.8'
 
 services:
+  init-priv-validator-state:
+    image: busybox
+    restart: 'no'
+    command:
+      [
+        'sh',
+        '-c',
+        'mkdir -p /root/.poktroll/data/; if [ ! -f /root/.poktroll/data/priv_validator_state.json ]; then echo "{\"height\": \"0\", \"round\": 0, \"step\": 0}" > /root/.poktroll/data/priv_validator_state.json; fi; chmod -R 777 /root/.poktroll/data/'
+      ]
+    volumes:
+      - ./poktrolld-data:/root/.poktroll/
   # Full node
   poktrolld:
     image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG}
@@ -24,73 +35,39 @@ services:
         condition: service_completed_successfully
     volumes:
       - ./poktrolld-data:/root/.poktroll/
-
-  # Before enabling Relay Miner, make sure to add the mnemonic to `RELAYMINER_MNEMONIC` variable in .env.
-  # 
-  # # Relay Miner
-  # relayminer-example:
-  #   image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG}
-  #   entrypoint: [poktrolld]
-  #   command:
-  #     - relayminer
-  #     - --home=/root/.poktroll/
-  #     - --keyring-backend=test
-  #     - --config=/root/.poktroll/config/relayminer_config.yaml
-  #   ports:
-  #     # 8545 is the port RelayMiner is configured to listen on in `relayminer_config.yaml`.
-  #     - "8545:8545"
-  #   restart: unless-stopped
-  #   volumes:
-  #     - ./relayminer-example:/root/.poktroll/
-  # 
-  # # A container that imports the key for Relay Miner. Beware, the CLI fails on subsequent runs (but succeeds on first)
-  # relayminer-mnemonic-import:
-  #   image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG}
-  #   entrypoint: sh -c
-  #   command: >
-  #     "echo \"${RELAYMINER_MNEMONIC}\" |
-  #     poktrolld --keyring-backend=test --home=/root/.poktroll/ keys add key-for-relayminer1 --recover"
-  #   restart: "no"
-  #   volumes:
-  #     - ./relayminer-example:/root/.poktroll/
-
-  # Before enabling AppGate Server, make sure to add the mnemonic to `APPGATE_SERVER_MNEMONIC` variable in .env.
-  # 
-  # # AppGate Server
-  # appgate-server-example:
-  #   image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG}
-  #   entrypoint: [poktrolld]
-  #   command:
-  #     - appgate-server
-  #     - --home=/root/.poktroll/
-  #     - --keyring-backend=test
-  #     - --config=/root/.poktroll/config/appgate_config.yaml
-  #   ports:
-  #     # 85 is the port AppGate Server is configured to listen on in `relayminer_config.yaml`.
-  #     - "85:85"
-  #   restart: unless-stopped
-  #   volumes:
-  #     - ./appgate-server-example:/root/.poktroll/
-  #
-  # # A container that imports the key for AppGate Server. Beware, the CLI fails on subsequent runs (but succeeds on first)
-  # appgate-server-mnemonic-import:
-  #   image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG}
-  #   entrypoint: sh -c
-  #   command: >
-  #     "echo \"${APPGATE_SERVER_MNEMONIC}\" |
-  #     poktrolld --keyring-backend=test --home=/root/.poktroll/ keys add key-for-appgateserver --recover"
-  #   restart: "no"
-  #   volumes:
-  #     - ./appgate-server-example:/root/.poktroll/
-
-  init-priv-validator-state:
-    image: busybox
-    restart: 'no'
-    command:
-      [
-        'sh',
-        '-c',
-        'mkdir -p /root/.poktroll/data/; if [ ! -f /root/.poktroll/data/priv_validator_state.json ]; then echo "{\"height\": \"0\", \"round\": 0, \"step\": 0}" > /root/.poktroll/data/priv_validator_state.json; fi; chmod -R 777 /root/.poktroll/data/'
-      ]
-    volumes:
-      - ./poktrolld-data:/root/.poktroll/
+      - ./supplier_stake_config_example.yaml:/poktroll//supplier_stake_config_example.yaml
+      - ./application_stake_config_example.yaml:/poktroll/application_stake_config_example.yaml
+#  # Before enabling Relay Miner, make sure to add the mnemonic to `RELAYMINER_MNEMONIC` variable in .env.
+#  #
+#  # # Relay Miner
+#  relayminer-example:
+#    image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG}
+#    entrypoint: ["sh", "-c", "/root/start-relayminer.sh"]
+#    environment:
+#      - RELAYMINER_MNEMONIC=${RELAYMINER_MNEMONIC}
+#    ports:
+#      # 8545 is the port RelayMiner is configured to listen on in `relayminer_config.yaml`.
+#      - "8545:8545"
+#    restart: unless-stopped
+#    depends_on:
+#      - poktrolld
+#    volumes:
+#      - ./relayminer-example:/root/.poktroll/
+#      - ./start-relayminer.sh:/root/start-relayminer.sh
+#  # Before nabling AppGate Server, make sure to add the mnemonic to `APPGATE_SERVER_MNEMONIC` variable in .env.
+#  #
+#  # # AppGate Server
+#  appgate-server-example:
+#    image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG}
+#    entrypoint: ["sh", "-c", "/root/start-appgate-server.sh"]
+#    environment:
+#      - APPGATE_SERVER_MNEMONIC=${APPGATE_SERVER_MNEMONIC}
+#    ports:
+#      # 85 is the port AppGate Server is configured to listen on in `relayminer_config.yaml`.
+#      - "85:85"
+#    restart: unless-stopped
+#    depends_on:
+#      - poktrolld
+#    volumes:
+#      - ./appgate-server-example:/root/.poktroll/
+#      - ./start-appgate-server.sh:/root/start-appgate-server.sh
