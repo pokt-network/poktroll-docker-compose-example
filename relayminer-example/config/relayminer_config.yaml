@@ -10,14 +10,14 @@ proxies:
     type: http
     host: 0.0.0.0:8545
 suppliers:
-  - service_id: etherium
+  - service_id: 0021
     type: http
     service_config:
-      url: "" # Etherium RPC endpoint to forward relays to
+      url: http://YOUR_NODE_IP_OR_HOST # Local or remote Ethereum RPC endpoint to forward relays to
     proxy_names:
       - http-proxy
     hosts:
-      - http://YOUR_NODE_IP_OR_HOST:8545
+      - http://YOUR_NODE_IP_OR_HOST:8545 # External IP address or hostname of your relay miner
 metrics:
   enabled: true
   addr: :9090
