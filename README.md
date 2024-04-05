@@ -90,7 +90,29 @@ Relay Miner provides services to offer on the Pocket Network.
 - Full Node. This Relay Miner deployment guide assumes the Full Node is deployed [in the same docker-compose stack](#deploying-a-full-node).
 - A poktroll account with uPOKT tokens. Tokens can be acquired by contacting the team. We plan to add a faucet for public testnet. You are going to need a BIP39 mnemonic phrase for your account. 
 
-### 1. Stake your supplier
+### 1. Fund your account
+On the host where you started the full node container, run the following commands to fund your account. 
+```bash
+docker exec -it poktroll-poktrolld-1 ignite account create shannon --keyring-dir=./localnet/poktrolld --keyring-backend test
+```
+Copy the mnemonic that's pasted to the screen and copy this into your `RELAYMINER_MNEMONIC` variable in the `.env` file. Continue with the commands below: 
+```bash
+docker exec -it poktroll-poktrolld-1 bash
+poktrolld keys add --recover -i validator1
+```
+When you see the `> Enter your bip39 mnemonic` prompt, paste the mnemonic provided by the Pocket team for testnet. 
+When you see the `> Enter your bip39 passphrase. This is combined with the mnemonic to derive the seed. Most users should just hit enter to use the default, ""` prompt, hit enter without adding a passphrase. Finish funding your account by using the command below: 
+
+```bash
+poktrolld tx bank send validator1 [your_address] 10000upokt --chain-id poktroll
+```
+
+You can check that your address is funded correctly by running:
+```bash
+poktrolld query bank balances [your_address]
+```
+
+### 2. Stake your supplier
 
 Assuming the account you're planning to use for Relay Miner is already available in your local Keyring (can check with `poktrolld keys list`), create a supplier stake config and run the stake command. [This documentation page](https://dev.poktroll.com/configs/supplier_staking_config) explains what supplier staking config is and how it can be used. This command can be used as an example:
 
@@ -98,13 +120,13 @@ Assuming the account you're planning to use for Relay Miner is already available
 poktrolld --keyring-backend=test --node=http://YOUR_FULL_NODE_ADDRESS:26657/ tx supplier stake-supplier --config=./supplier_stake_config_example.yaml --from=YOUR_KEY_NAME --chain-id poktroll
 ```
 
-### 2. Configure RelayMiner and environment variables
+### 3. Configure RelayMiner and environment variables
 
 Using [RelayMiner config](https://dev.poktroll.com/configs/relayminer_config) documentation as a reference, change the [relayminer_config.yaml](./relayminer-example/config/relayminer_config.yaml) configuration file.
 
 Also, change the value of `RELAYMINER_MNEMONIC` in the `.env` file. The value should be a BIP39 mnemonic phrase of the account you're planning to use for RelayMiner.
 
-### 3. Prepare and run RelayMiner containers
+### 4. Prepare and run RelayMiner containers
 
 By default, we commented out `relayminer-example` and `relayminer-mnemonic-import` in [docker-compose.yml](./docker-compose.yml).
 Uncomment these containers so docker-compose is aware of them, and run:
