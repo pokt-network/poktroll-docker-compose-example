@@ -6,5 +6,5 @@ services:
       # The endpoint URL for the Ethereum service is provided via the RelayMiner.
       # The RelayMiner acts as a proxy, forwarding requests to the actual Ethereum data node behind it.
       # This setup allows for flexible and dynamic service provisioning within the network.
-      - url: http://54.200.56.190:8545
+      - url: http://YOUR_NODE_IP_OR_HOST:8545
         rpc_type: json_rpc
