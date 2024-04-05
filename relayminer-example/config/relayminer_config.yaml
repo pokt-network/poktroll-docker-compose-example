@@ -10,7 +10,7 @@ proxies:
     type: http
     host: 0.0.0.0:8545
 suppliers:
-  - service_id: etherium
+  - service_id: "0021"
     type: http
     service_config:
       url: "" # Etherium RPC endpoint to forward relays to
