@@ -93,23 +93,22 @@ Relay Miner provides services to offer on the Pocket Network.
 ### 1. Fund your account
 On the host where you started the full node container, run the following commands to fund your account. 
 ```bash
-docker exec -it poktroll-poktrolld-1 ignite account create shannon --keyring-dir=./localnet/poktrolld --keyring-backend test
+docker exec -it poktroll-docker-compose-example-poktrolld-1 poktrolld keys add relayminer-1
 ```
 Copy the mnemonic that's pasted to the screen and copy this into your `RELAYMINER_MNEMONIC` variable in the `.env` file. Continue with the commands below: 
 ```bash
-docker exec -it poktroll-poktrolld-1 bash
-poktrolld keys add --recover -i validator1
+docker exec -it poktroll-docker-compose-example-poktrolld-1 poktrolld keys add --recover -i pocket-team
 ```
 When you see the `> Enter your bip39 mnemonic` prompt, paste the mnemonic provided by the Pocket team for testnet. 
 When you see the `> Enter your bip39 passphrase. This is combined with the mnemonic to derive the seed. Most users should just hit enter to use the default, ""` prompt, hit enter without adding a passphrase. Finish funding your account by using the command below: 
 
 ```bash
-poktrolld tx bank send validator1 [your_address] 10000upokt --chain-id poktroll
+docker exec -it poktroll-docker-compose-example-poktrolld-1 poktrolld tx bank send pocket-team [your_address] 10000upokt --chain-id poktroll
 ```
 
 You can check that your address is funded correctly by running:
 ```bash
-poktrolld query bank balances [your_address]
+docker exec -it poktroll-docker-compose-example-poktrolld-1 poktrolld query bank balances [your_address]
 ```
 
 ### 2. Stake your supplier
