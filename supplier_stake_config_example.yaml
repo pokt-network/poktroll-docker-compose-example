@@ -1,10 +1,10 @@
 # Please check documentation: https://dev.poktroll.com/configs/supplier_staking_config
 stake_amount: 1000upokt
 services:
-  - service_id: 0021
-    endpoints:
-      # The endpoint URL for the Ethereum service is provided via the RelayMiner.
-      # The RelayMiner acts as a proxy, forwarding requests to the actual Ethereum data node behind it.
-      # This setup allows for flexible and dynamic service provisioning within the network.
-      - url: http://YOUR_NODE_IP_OR_HOST:8545
-        rpc_type: json_rpc
+- service_id: 0021
+  endpoints:
+  # The endpoint URL for the Ethereum service is provided via the RelayMiner.
+  # The RelayMiner acts as a proxy, forwarding requests to the actual Ethereum data node behind it.
+  # This setup allows for flexible and dynamic service provisioning within the network.
+  - publicly_exposed_url: http://YOUR_NODE_IP_OR_HOST:8545
+    rpc_type: json_rpc
