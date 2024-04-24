@@ -14,7 +14,7 @@ services:
       - ./poktrolld-data:/root/.poktroll/
   # Full node
   poktrolld:
-    image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG}
+    image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG:-main}
     entrypoint: [poktrolld]
     command:
       - start
@@ -41,7 +41,7 @@ services:
 #  #
 #  # # Relay Miner
 #  relayminer-example:
-#    image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG}
+#    image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG:-main}
 #    entrypoint: ["sh", "-c", "/root/start-relayminer.sh"]
 #    environment:
 #      - RELAYMINER_MNEMONIC=${RELAYMINER_MNEMONIC}
@@ -58,7 +58,7 @@ services:
 #  #
 #  # # AppGate Server
 #  appgate-server-example:
-#    image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG}
+#    image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG:-main}
 #    entrypoint: ["sh", "-c", "/root/start-appgate-server.sh"]
 #    environment:
 #      - APPGATE_SERVER_MNEMONIC=${APPGATE_SERVER_MNEMONIC}

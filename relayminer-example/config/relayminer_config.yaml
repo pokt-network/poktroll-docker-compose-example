@@ -5,19 +5,16 @@ pocket_node:
   query_node_rpc_url: tcp://poktrolld:26657
   query_node_grpc_url: tcp://poktrolld:26658
   tx_node_rpc_url: tcp://poktrolld:26657
-proxies:
-  - proxy_name: http-proxy
-    type: http
-    host: 0.0.0.0:8545
 suppliers:
-  - service_id: "0021"
-    type: http
-    service_config:
-      url: "" # Etherium RPC endpoint to forward relays to
-    proxy_names:
-      - http-proxy
-    hosts:
-      - http://YOUR_NODE_IP_OR_HOST:8545
+- service_id: "0021" # 0021 is an Ethereum mainnet service ID. Other legacy IDs: https://docs.pokt.network/reference/supported-chains
+  service_config:
+    url: "" # Ethereum mainnet RPC endpoint to forward relays to.
+    publicly_exposed_endpoints:
+    - YOUR_NODE_IP_OR_HOST # Hostname or IP address. You want this to match the address from the supplier stake config.
+    listen_url: http://0.0.0.0:8545 # You can replace `0.0.0.0` with a different network interface if you don't want to open port on all network interfaces.
 metrics:
   enabled: true
   addr: :9090
+pprof:
+  enabled: true
+  addr: :6060
