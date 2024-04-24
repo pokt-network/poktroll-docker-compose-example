@@ -11,7 +11,7 @@ suppliers:
     url: "" # Ethereum mainnet RPC endpoint to forward relays to.
     publicly_exposed_endpoints:
     - YOUR_NODE_IP_OR_HOST # Hostname or IP address. You want this to match the address from the supplier stake config.
-    listen_url: http://0.0.0.0:8545 # You can replace `0.0.0.0` with a different network interface if you don't want to open port on all network interfaces.
+  listen_url: http://0.0.0.0:8545 # You can replace `0.0.0.0` with a different network interface if you don't want to open port on all network interfaces.
 metrics:
   enabled: true
   addr: :9090
