@@ -16,5 +16,5 @@ metrics:
   enabled: true
   addr: :9090
 pprof:
-  enabled: true
+  enabled: false
   addr: :6060

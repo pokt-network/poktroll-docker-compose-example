@@ -35,7 +35,7 @@ services:
         condition: service_completed_successfully
     volumes:
       - ./poktrolld-data:/root/.poktroll/
-      - ./supplier_stake_config_example.yaml:/poktroll//supplier_stake_config_example.yaml
+      - ./supplier_stake_config_example.yaml:/poktroll/supplier_stake_config_example.yaml
       - ./application_stake_config_example.yaml:/poktroll/application_stake_config_example.yaml
   #  # Before enabling Relay Miner, make sure to add the mnemonic to `RELAYMINER_MNEMONIC` variable in .env.
   #  #

@@ -16,3 +16,6 @@ metrics:
   enabled: true
   # The address that the metrics exporter will listen on. Can be just a port, or host:port
   addr: :9090
+pprof:
+  enabled: false
+  addr: :6060
