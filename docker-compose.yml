@@ -1,14 +1,14 @@
-version: '3.8'
+version: "3.8"
 
 services:
   init-priv-validator-state:
     image: busybox
-    restart: 'no'
+    restart: "no"
     command:
       [
-        'sh',
-        '-c',
-        'mkdir -p /root/.poktroll/data/; if [ ! -f /root/.poktroll/data/priv_validator_state.json ]; then echo "{\"height\": \"0\", \"round\": 0, \"step\": 0}" > /root/.poktroll/data/priv_validator_state.json; fi; chmod -R 777 /root/.poktroll/data/'
+        "sh",
+        "-c",
+        'mkdir -p /root/.poktroll/data/; if [ ! -f /root/.poktroll/data/priv_validator_state.json ]; then echo "{\"height\": \"0\", \"round\": 0, \"step\": 0}" > /root/.poktroll/data/priv_validator_state.json; fi; chmod -R 777 /root/.poktroll/data/',
       ]
     volumes:
       - ./poktrolld-data:/root/.poktroll/
@@ -16,6 +16,9 @@ services:
   poktrolld:
     image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG:-main}
     pull_policy: always
+    # Uncomment this if you are running on a different platform
+    # platform: "linux/amd64"
+    # platform: "linux/amd64" # for aarch64
     command:
       - start
       - --home=/root/.poktroll/

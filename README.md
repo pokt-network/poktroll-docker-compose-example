@@ -1,6 +1,8 @@
 # Poktrolld Docker-Compose Example <!-- omit in toc -->
 
-- [Understanding Shannon upgrade actors](#understanding-shannon-upgrade-actors)
+- [Key Terms](#key-terms)
+- [TODOs](#todos)
+- [Understanding Actors in the Shannon upgrade](#understanding-actors-in-the-shannon-upgrade)
 - [Deploying a Full Node](#deploying-a-full-node)
   - [0. Prerequisites](#0-prerequisites)
   - [1. Clone the Repository](#1-clone-the-repository)
@@ -8,24 +10,57 @@
   - [3. Configure Environment Variables](#3-configure-environment-variables)
   - [4. Launch the Node](#4-launch-the-node)
 - [Deploying a Relay Miner](#deploying-a-relay-miner)
-  - [0. Prerequisites](#0-prerequisites-1)
-  - [1. Stake your supplier](#1-stake-your-supplier)
-  - [2. Configure RelayMiner and environment variables](#2-configure-relayminer-and-environment-variables)
-  - [3. Prepare and run RelayMiner containers](#3-prepare-and-run-relayminer-containers)
+  - [0. Prerequisites for a Relay Miner](#0-prerequisites-for-a-relay-miner)
+  - [1. Fund your account](#1-fund-your-account)
+  - [2. Stake your supplier](#2-stake-your-supplier)
+  - [3. Configure RelayMiner and environment variables](#3-configure-relayminer-and-environment-variables)
+  - [4. Prepare and run RelayMiner containers](#4-prepare-and-run-relayminer-containers)
 - [Deploying an AppGate Server](#deploying-an-appgate-server)
-  - [0. Prerequisites](#0-prerequisites-2)
+  - [0. Prerequisites](#0-prerequisites-1)
   - [1. Stake your application](#1-stake-your-application)
   - [2. Configure AppGate Server and environment variables](#2-configure-appgate-server-and-environment-variables)
   - [3. Prepare and run AppGate Server containers](#3-prepare-and-run-appgate-server-containers)
   - [4. Send a relay](#4-send-a-relay)
 
-## Understanding Shannon upgrade actors
+## Key Terms
 
-For those familiar with Pocket Network Mainnet - Morse, the introduction of multiple node types in the upcoming Shannon upgrade may require some explanation. In Shannon, the "supplier" role is separated from the "full node" role.
+- `Morse` - The current version of the Pocket Network MainNet (a.k.a v0).
+- `Shannon` - The upcoming version of the Pocket Network MainNet (a.k.a v1).
+- `Validator` - A node that participates in the consensus process.
+  - In `Morse`Same in `Morse` and `Shannon`.
+  - In `Shannon`
+- `Node` - A `Morse` actor that stakes to provide Relay services.
+  - In `Morse` - All `Validator` are nodes but only the top 1000 stakes `Node`s are `Validator`s
+  - This actor is not present in `Shannon` and decoupled into `Supplier` and a `RelayMiner`.
+- `Supplier` - The on-chain actor that stakes to provide Relay services.
+  - In `Shannon` - This actor is responsible needs access to a Full Node (sovereign or node).
+- `RelayMiner` - The off-chain service that provides Relay services on behalf of a `Supplier`.
+  - In `Shannon` - This actor is responsible for providing the Relay services.
+- `AppGate Server` - The off-chain service that provides Relay services on behalf of an `Application` or `Gateway`.
 
-In Morse (current Pocket Network mainnet), a validator or a full node was responsible for both holding blockchain data and performing relays. With Shannon, the RelayMiner software, which runs the supplier logic, is distinct from the full-node/validator.
+For more details, please refer to the [Shannon actors documentation](https://dev.poktroll.com/actors).
 
-Furthermore, Shannon introduces the AppGate Server, a software component that provides access to Pocket Network suppliers. This addition will be beneficial for both Applications and Gateways.
+## TODOs
+
+- [ ] Copy-paste the image from [Shannon actors documentation](https://dev.poktroll.com/actors) here
+- [ ] Move this documentation to dev.poktroll.com
+- [ ] Create a table comparing the actors in `Morse` and `Shannon`
+- [ ] Simplify the copy-pasta commands by leveraging `helpers.sh`
+
+## Understanding Actors in the Shannon upgrade
+
+For those familiar with `Morse`, Pocket Network Mainnet,, the introduction of
+multiple node types in the upcoming `Shannon` requires some explanation.
+
+In `Shannon`, the `Supplier` role is separated from the `Full node` role.
+
+In `Morse`, a `Validator` or a staked `Node` was responsible for both holding
+a copy of the on-chain data, as well as performing relays. With `Shannon`, the
+`RelayMiner` software, which runs the supplier logic, is distinct from the full-node/validator.
+
+Furthermore, `Shannon` introduces the `AppGate Server`, a software component that
+acts on behalf of either `Applications` or `Gateways` to access services provided
+by Pocket Network `Supplier`s via `RelayMiners`.
 
 For more details, please refer to the [Shannon actors documentation](https://dev.poktroll.com/actors).
 
@@ -34,24 +69,31 @@ For more details, please refer to the [Shannon actors documentation](https://dev
 ### 0. Prerequisites
 
 Ensure the following software is installed on your system:
+
 - [git](https://github.com/git-guides/install-git);
 - [Docker](https://docs.docker.com/engine/install/);
 - [docker-compose](https://docs.docker.com/compose/install/#installation-scenarios);
 
-Additionally, the system must be capable of exposing ports to the internet for peer-to-peer communication.
+Additionally, the system must be capable of exposing ports to the internet for
+peer-to-peer communication.
 
 ### 1. Clone the Repository
 
-```
+```bash
 git clone https://github.com/pokt-network/poktroll-docker-compose-example.git
 cd poktroll-docker-compose-example
 ```
 
 ### 2. Download Network Genesis
 
-The Poktrolld blockchain deploys various networks (e.g., testnets, mainnet). Access the list of Poktrolld networks available for community participation here: [Poktrolld Networks](https://github.com/pokt-network/pocket-network-genesis/tree/master/poktrolld).
+The Poktrolld blockchain deploys various networks: DevNet, TestNet, MainNet, etc...
 
-Download and place the genesis.json for your chosen network (e.g., `testnet-validated`) into the poktrolld/config directory:
+Access the list of Poktrolld networks available for community participation at [Poktrolld Networks](https://github.com/pokt-network/pocket-network-genesis/tree/master/poktrolld).
+
+Download and place the `genesis.json` for your chosen network (e.g., `testnet-validated`)
+into the `poktrolld/config` directory:
+
+E.g. Testnet-validated:
 
 ```bash
 curl https://raw.githubusercontent.com/pokt-network/pocket-network-genesis/master/poktrolld/testnet-validated.json > poktrolld-data/config/genesis.json
@@ -65,9 +107,16 @@ Create and configure your `.env` file from the sample:
 cp .env.sample .env
 ```
 
-Update `NODE_HOSTNAME` in `.env` to the IP address or hostname of your node.
+Update `NODE_HOSTNAME` in `.env` to the IP address or hostname of your node. For example:
+
+```bash
+sed -i -e  s/YOUR_NODE_IP_OR_HOST/69.42.690.420/g .env
+```
 
 ### 4. Launch the Node
+
+Note: You may need to replace `docker-compose` with `docker compose` if you are
+running a newer version of Docker.
 
 Initiate the node with:
 
@@ -85,35 +134,57 @@ docker-compose logs -f
 
 Relay Miner provides services to offer on the Pocket Network.
 
-### 0. Prerequisites
+### 0. Prerequisites for a Relay Miner
 
-- Full Node. This Relay Miner deployment guide assumes the Full Node is deployed [in the same docker-compose stack](#deploying-a-full-node).
-- A poktroll account with uPOKT tokens. Tokens can be acquired by contacting the team. We plan to add a faucet for public testnet. You are going to need a BIP39 mnemonic phrase for your account. 
+- **Full Node**: This Relay Miner deployment guide assumes the Full Node is deployed [in the same docker-compose stack](#deploying-a-full-node).
+- **A poktroll account with uPOKT tokens**: Tokens can be acquired by contacting the team. We plan to add a faucet for public testnet. You are going to need a BIP39 mnemonic phrase for your account.
 
 ### 1. Fund your account
-On the host where you started the full node container, run the following commands to fund your account. 
+
+On the host where you started the full node container, run the commands below to
+fund your account.
+
+Create a new `RelayMiner` account:
+
 ```bash
 docker exec -it poktroll-docker-compose-example-poktrolld-1 poktrolld keys add relayminer-1
 ```
-Copy the mnemonic that's pasted to the screen and copy this into your `RELAYMINER_MNEMONIC` variable in the `.env` file. Continue with the commands below: 
+
+Copy the mnemonic that's printed to the screen to the `RELAYMINER_MNEMONIC` variable in your `.env` file.
+
+Save the outputted address to a variable for simplicity::
+
+```bash
+export RELAYMINER_ADDR=pokt1...
+```
+
 ```bash
 docker exec -it poktroll-docker-compose-example-poktrolld-1 poktrolld keys add --recover -i pocket-team
 ```
-When you see the `> Enter your bip39 mnemonic` prompt, paste the mnemonic provided by the Pocket team for testnet. 
-When you see the `> Enter your bip39 passphrase. This is combined with the mnemonic to derive the seed. Most users should just hit enter to use the default, ""` prompt, hit enter without adding a passphrase. Finish funding your account by using the command below: 
+
+When you see the `> Enter your bip39 mnemonic` prompt, paste the mnemonic provided by the Pocket team for testnet.
+
+When you see the `> Enter your bip39 passphrase. This is combined with the mnemonic to derive the seed. Most users should just hit enter to use the default, ""` prompt, hit enter without adding a passphrase. Finish funding your account by using the command below:
 
 ```bash
-docker exec -it poktroll-docker-compose-example-poktrolld-1 poktrolld tx bank send pocket-team [your_address] 10000upokt --chain-id poktroll
+docker exec -it poktroll-docker-compose-example-poktrolld-1 poktrolld tx bank send pocket-team $RELAYMINER_ADDR 10000upokt -y --chain-id poktroll
 ```
 
 You can check that your address is funded correctly by running:
+
 ```bash
-docker exec -it poktroll-docker-compose-example-poktrolld-1 poktrolld query bank balances [your_address]
+docker exec -it poktroll-docker-compose-example-poktrolld-1 poktrolld query bank balances $RELAYMINER_ADDR
 ```
 
 ### 2. Stake your supplier
 
-Assuming the account you're planning to use for Relay Miner is already available in your local Keyring (can check with `poktrolld keys list`), create a supplier stake config and run the stake command. [This documentation page](https://dev.poktroll.com/configs/supplier_staking_config) explains what supplier staking config is and how it can be used. This command can be used as an example:
+Verify that the account you're planning to use for `RelayMiner` is available in your local Keyring:
+
+```bash
+docker exec -it poktroll-docker-compose-example-poktrolld-1 poktrolld keys list
+```
+
+Assuming the account you're planning to use for `RelayMiner` is already available in your local Keyring (can check with `poktrolld keys list`), create a supplier stake config and run the stake command. [This documentation page](https://dev.poktroll.com/configs/supplier_staking_config) explains what supplier staking config is and how it can be used. This command can be used as an example:
 
 ```bash
 docker exec -it poktroll-docker-compose-example-poktrolld-1 poktrolld tx supplier stake-supplier --config=./supplier_stake_config_example.yaml --from=relayminer-1 --chain-id poktroll
@@ -146,8 +217,8 @@ AppGate Server allows to use services provided by other operators on Pocket Netw
 
 ### 0. Prerequisites
 
-- Full Node. This AppGate Server deployment guide assumes the Full Node is deployed [in the same docker-compose stack](#deploying-a-full-node).
-- A poktroll account with uPOKT tokens. Tokens can be acquired by contacting the team. We plan to add a faucet for public testnet. You are going to need a BIP39 mnemonic phrase for your account. 
+- **Full Node**: This AppGate Server deployment guide assumes the Full Node is deployed [in the same docker-compose stack](#deploying-a-full-node).
+- **A poktroll account with uPOKT tokens**: Tokens can be acquired by contacting the team. We plan to add a faucet for public testnet. You are going to need a BIP39 mnemonic phrase for your account.
 
 ### 1. Stake your application
 
@@ -177,6 +248,7 @@ Check logs and confirm the node works as expected:
 ```bash
 docker-compose logs -f appgate-server-example
 ```
+
 ### 4. Send a relay
 
 You can send requests to the newly deployed AppGate Server. If there are any suppliers on the network that can provide the service,
