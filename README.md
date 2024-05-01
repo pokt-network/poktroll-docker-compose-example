@@ -241,6 +241,14 @@ poktrolld keys add supplier-1
    export SUPPLIER_ADDR="pokt1..."
    ```
 
+Make sure to:
+
+```bash
+source .env
+```
+
+And fund your supplier account:
+
 ```bash
 poktrolld tx bank send pnf $SUPPLIER_ADDR 10000upokt --chain-id=poktroll --yes
 ```
@@ -293,7 +301,7 @@ in the `supplier_stake_config_example.yaml` file above.
 
 :::
 
-Verify your supplier is staked
+Verify your supplier is staked:
 
 ```bash
 poktrolld query supplier show-supplier $SUPPLIER_ADDR
@@ -320,9 +328,6 @@ service URL. We suggest using your own node, but you can get one from Grove for 
 ```bash
 sed -i -e s/backend_url: ""/backend_url: "https://eth-mainnet.rpc.grove.city/v1/<APP_ID>"/g relayminer-example/config/relayminer_config.yaml
 ```
-
-Uncomment the `relayminer-example` and `relayminer-mnemonic-import` in [docker-compose.yml](./docker-compose.yml).
-Note that these were commented by default for example purposes.
 
 Start up the RelayMiner:
 
@@ -372,6 +377,14 @@ poktrolld keys add application-1
    export APPLICATION_ADDR="pokt1..."
    ```
 
+Make sure to:
+
+```bash
+  source .env
+```
+
+And fund your application account:
+
 ```bash
 poktrolld tx bank send pnf $APPLICATION_ADDR 10000upokt --chain-id=poktroll --yes
 ```
@@ -385,7 +398,7 @@ poktrolld query bank balances $APPLICATION_ADDR
 Assuming the account you're planning to use for AppGate Server is already available in your local Keyring (can check with `poktrolld keys list`), create an application stake config and run the stake command. [This documentation page](https://dev.poktroll.com/configs/app_staking_config) explains what application staking config is and how it can be used. This command can be used as an example:
 
 ```bash
-poktrolld tx application stake-application --config=./stake_configs/application_stake_config_example.yaml --from=YOUR_KEY_NAME --chain-id=poktroll --yes
+poktrolld tx application stake-application --config=./stake_configs/application_stake_config_example.yaml --from=application-1 --chain-id=poktroll --yes
 ```
 
 ### 2. Configure and stake your Application
@@ -425,12 +438,6 @@ explains what the AppGate Server operation config is and how it can be used.
 
 :::
 
-Update the provided example RelayMiner operation config:
-
-```bash
-sed -i -e s/key-for-application/application-1/g appgate-server-example/config/appgate_config.yaml
-```
-
 appgate-server-example/config/appgate_config.yaml
 
 ```bash
@@ -453,9 +460,14 @@ The endpoint you want to send request to is: `http://your_node:appgate_server_po
 represented by `0021`:
 
 ```bash
-❯ curl http://my-node:85/0021 \
+curl http://$NODE_HOSTNAME:85/0021 \
   -X POST \
   -H "Content-Type: application/json" \
   --data '{"method":"eth_blockNumber","params":[],"id":1,"jsonrpc":"2.0"}'
+```
+
+You should expect a result that looks like so:
+
+```
 {"jsonrpc":"2.0","id":1,"result":"0x1289571"}
 ```

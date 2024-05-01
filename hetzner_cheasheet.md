@@ -1,13 +1,18 @@
 # tl;dr Hetzner Ubuntu Setup <!-- omit in toc -->
 
+:::warning Olshansky's docs
+
+This is a tl;dr copy-pasta (by & for Olshansky) while setting up a Hetzner server.
+It is not intended to act as proper documentation so use at your own risk.
+
+:::
+
 - [General](#general)
 - [Dependencies](#dependencies)
   - [Install Docker](#install-docker)
   - [Install docker-compose](#install-docker-compose)
-- [Pocket Setup](#pocket-setup)
+  - [bashrc](#bashrc)
 - [Pocket Logic](#pocket-logic)
-
-This is a tl;dr copy-pasta while Olshansky was setting up a Hetzner server.
 
 ## General
 
@@ -45,9 +50,10 @@ Ref [here](https://www.digitalocean.com/community/tutorials/how-to-install-and-u
 sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 ```
+
 ### bashrc
 
-```bash
+````bash
 
 ## Pocket Setup
 
@@ -62,7 +68,7 @@ curl https://raw.githubusercontent.com/pokt-network/pocket-network-genesis/maste
 
 cp .env.sample .env
 sed -i -e s/YOUR_NODE_IP_OR_HOST/.../g .env
-```
+````
 
 ## Pocket Logic
 
