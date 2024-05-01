@@ -12,13 +12,12 @@ services:
       ]
     volumes:
       - ./poktrolld-data:/root/.poktroll/
+
   # Full node
   poktrolld:
-    container_name: poktrolld_full_node
+    container_name: full_node
     image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG:-main}
     pull_policy: always
-    # Uncomment this if you are running on a different platform
-    # platform: "linux/amd64"
     # platform: "linux/amd64" # for aarch64
     command:
       - start
@@ -41,35 +40,37 @@ services:
       - ./poktrolld-data:/root/.poktroll/
       - ./supplier_stake_config_example.yaml:/poktroll/supplier_stake_config_example.yaml
       - ./application_stake_config_example.yaml:/poktroll/application_stake_config_example.yaml
-  # # Relay Miner
-  # relayminer-example:
-  #   image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG:-main}
-  #   pull_policy: always
-  #   entrypoint: ["sh", "-c", "/root/start-relayminer.sh"]
-  #   environment:
-  #     - RELAYMINER_MNEMONIC=${RELAYMINER_MNEMONIC}
-  #   ports:
-  #     # 8545 is the port RelayMiner is configured to listen on in `relayminer_config.yaml`.
-  #     - "8545:8545"
-  #   restart: unless-stopped
-  #   depends_on:
-  #     - poktrolld
-  #   volumes:
-  #     - ./relayminer-example:/root/.poktroll/
-  #     - ./start-relayminer.sh:/root/start-relayminer.sh
-  # # AppGate Server
-  # appgate-server-example:
-  #   image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG:-main}
-  #   pull_policy: always
-  #   entrypoint: ["sh", "-c", "/root/start-appgate-server.sh"]
-  #   environment:
-  #     - APPGATE_SERVER_MNEMONIC=${APPGATE_SERVER_MNEMONIC}
-  #   ports:
-  #     # 85 is the port AppGate Server is configured to listen on in `relayminer_config.yaml`.
-  #     - "85:85"
-  #   restart: unless-stopped
-  #   depends_on:
-  #     - poktrolld
-  #   volumes:
-  #     - ./appgate-server-example:/root/.poktroll/
-  #     - ./start-appgate-server.sh:/root/start-appgate-server.sh
+
+  # Relay Miner
+  relayminer-example:
+    image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG:-main}
+    container_name: relay_miner
+    pull_policy: always
+    entrypoint: ["sh", "-c", "/root/start-relayminer.sh"]
+    environment:
+      - SUPPLIER_MNEMONIC=${SUPPLIER_MNEMONIC}
+    ports:
+      - "8545:8545" # 8545 is the port RelayMiner is configured to listen on in `relayminer_config.yaml`.
+    restart: unless-stopped
+    depends_on:
+      - poktrolld
+    volumes:
+      - ./relayminer-example:/root/.poktroll/
+      - ./start-relayminer.sh:/root/start-relayminer.sh
+
+  # AppGate Server
+  appgate-server-example:
+    image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG:-main}
+    container_name: appgate_server
+    pull_policy: always
+    entrypoint: ["sh", "-c", "/root/start-appgate-server.sh"]
+    environment:
+      - APPLICATION_MNEMONIC=${APPLICATION_MNEMONIC}
+    ports:
+      - "85:85" # 85 is the port AppGate Server is configured to listen on in `relayminer_config.yaml`.
+    restart: unless-stopped
+    depends_on:
+      - poktrolld
+    volumes:
+      - ./appgate-server-example:/root/.poktroll/
+      - ./start-appgate-server.sh:/root/start-appgate-server.sh

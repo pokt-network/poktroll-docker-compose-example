@@ -1,3 +1,3 @@
 function poktrolld() {
-    docker exec -it poktrolld_full_node poktrolld "$@"
+    docker exec -it full_node poktrolld "$@"
 }

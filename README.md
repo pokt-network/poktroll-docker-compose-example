@@ -16,16 +16,16 @@
 - [Inspecting the Full Node](#inspecting-the-full-node)
   - [CometBFT Status](#cometbft-status)
   - [Latest Block](#latest-block)
-- [B. Deploying a Relay Miner](#b-deploying-a-relay-miner)
-  - [0. Prerequisites for a Relay Miner](#0-prerequisites-for-a-relay-miner)
-  - [1. Create, configure and fund a RelayMiner account](#1-create-configure-and-fund-a-relayminer-account)
+- [B. Creating a Supplier and Deploying a RelayMiner](#b-creating-a-supplier-and-deploying-a-relayminer)
+  - [0. Prerequisites for a RelayMiner](#0-prerequisites-for-a-relayminer)
+  - [1. Create, configure and fund a Supplier account](#1-create-configure-and-fund-a-supplier-account)
   - [2. Configure and stake your Supplier](#2-configure-and-stake-your-supplier)
   - [3. Configure and run your RelayMiner](#3-configure-and-run-your-relayminer)
 - [C. Deploying an AppGate Server](#c-deploying-an-appgate-server)
   - [0. Prerequisites for an AppGate Server](#0-prerequisites-for-an-appgate-server)
-  - [1. Stake your application](#1-stake-your-application)
-  - [2. Configure AppGate Server and environment variables](#2-configure-appgate-server-and-environment-variables)
-  - [3. Prepare and run AppGate Server containers](#3-prepare-and-run-appgate-server-containers)
+  - [1. Create, configure and fund your Application](#1-create-configure-and-fund-your-application)
+  - [2. Configure and stake your Application](#2-configure-and-stake-your-application)
+  - [3. Configure and run your AppGate Server](#3-configure-and-run-your-appgate-server)
   - [4. Send a relay](#4-send-a-relay)
 
 ## Key Terms
@@ -139,13 +139,13 @@ running a newer version of Docker.
 Initiate the node with:
 
 ```bash
-docker-compose up -d
+docker-compose up -d full_node
 ```
 
 Monitor node activity through logs with:
 
 ```bash
-docker-compose logs -f --tail 100
+docker-compose logs -f --tail 100 full_node
 ```
 
 ### 3. Add PNF (funding) Account
@@ -203,50 +203,52 @@ curl -s -X POST localhost:26657/status | jq
 curl -s -X POST localhost:26657/block | jq
 ```
 
-## B. Deploying a Relay Miner
+## B. Creating a Supplier and Deploying a RelayMiner
 
-Relay Miner provides services to offer on the Pocket Network.
+Supplier is an on-chain record that advertises services it'll provide.
 
-### 0. Prerequisites for a Relay Miner
+RelayMiner is an operator / service that provides services to offer on the Pocket Network.
 
-- **Full Node**: This Relay Miner deployment guide assumes the Full Node is
+### 0. Prerequisites for a RelayMiner
+
+- **Full Node**: This RelayMiner deployment guide assumes the Full Node is
   deployed in the same docker-compose stack; see section A.
 - **A poktroll account with uPOKT tokens**: Tokens can be acquired by contacting
   the team. You are going to need a BIP39 mnemonic phrase for an existing
   funded account.
 
-### 1. Create, configure and fund a RelayMiner account
+### 1. Create, configure and fund a Supplier account
 
 On the host where you started the full node container, run the commands below to
 create your account.
 
-Create a new `RelayMiner` account:
+Create a new `supplier` account:
 
 ```bash
-poktrolld keys add relayminer-1
+poktrolld keys add supplier-1
 ```
 
-1. Copy the mnemonic that's printed to the screen to the `RELAYMINER_MNEMONIC`
+1. Copy the mnemonic that's printed to the screen to the `SUPPLIER_MNEMONIC`
    variable in your `.env` file.
 
    ```bash
-   export RELAYMINER_MNEMONIC="foo bar ..."
+   export SUPPLIER_MNEMONIC="foo bar ..."
    ```
 
 2. Save the outputted address to a variable for simplicity::
 
    ```bash
-   export RELAYMINER_ADDR="pokt1..."
+   export SUPPLIER_ADDR="pokt1..."
    ```
 
 ```bash
-poktrolld tx bank send pnf $RELAYMINER_ADDR 10000upokt --chain-id=poktroll --yes
+poktrolld tx bank send pnf $SUPPLIER_ADDR 10000upokt --chain-id=poktroll --yes
 ```
 
 You can check that your address is funded correctly by running:
 
 ```bash
-poktrolld query bank balances $RELAYMINER_ADDR
+poktrolld query bank balances $SUPPLIER_ADDR
 ```
 
 ### 2. Configure and stake your Supplier
@@ -258,11 +260,11 @@ explains what supplier staking config is and how it can be used.
 
 :::
 
-Verify that the account you're planning to use for `RelayMiner` (created above)
+Verify that the account you're planning to use for `SUPPLIER` (created above)
 is available in your local Keyring:
 
 ```bash
-poktrolld keys list --list-names | grep "relayminer-1"
+poktrolld keys list --list-names | grep "supplier-1"
 ```
 
 Update the provided example supplier stake config:
@@ -274,13 +276,13 @@ sed -i -e s/YOUR_NODE_IP_OR_HOST/$NODE_HOSTNAME/g ./supplier_stake_config_exampl
 Use the configuration to stake your supplier:
 
 ```bash
-poktrolld tx supplier stake-supplier --config=./supplier_stake_config_example.yaml --from=relayminer-1 --chain-id=poktroll --yes
+poktrolld tx supplier stake-supplier --config=./supplier_stake_config_example.yaml --from=supplier-1 --chain-id=poktroll --yes
 ```
 
 Verify your supplier is staked
 
 ```bash
-poktrolld query supplier show-supplier $RELAYMINER_ADDR
+poktrolld query supplier show-supplier $SUPPLIER_ADDR
 ```
 
 ### 3. Configure and run your RelayMiner
@@ -292,7 +294,7 @@ explains what the RelayMiner operation config is and how it can be used.
 
 :::
 
-Update the provided example relay miner operation config:
+Update the provided example RelayMiner operation config:
 
 ```bash
 sed -i -e s/YOUR_NODE_IP_OR_HOST/$NODE_HOSTNAME/g relayminer-example/config/relayminer_config.yaml
@@ -311,13 +313,13 @@ Note that these were commented by default for example purposes.
 Start up the RelayMiner:
 
 ```bash
-docker-compose up -d
+docker-compose up -d relay_miner
 ```
 
 Check logs and confirm the node works as expected:
 
 ```bash
-docker-compose logs -f --tail 100 relayminer-example
+docker-compose logs -f --tail 100 relay_miner
 ```
 
 ## C. Deploying an AppGate Server
@@ -326,10 +328,45 @@ AppGate Server allows to use services provided by other operators on Pocket Netw
 
 ### 0. Prerequisites for an AppGate Server
 
-- **Full Node**: This AppGate Server deployment guide assumes the Full Node is deployed [in the same docker-compose stack](#deploying-a-full-node).
-- **A poktroll account with uPOKT tokens**: Tokens can be acquired by contacting the team. We plan to add a faucet for public testnet. You are going to need a BIP39 mnemonic phrase for your account.
+- **Full Node**: This AppGate Server deployment guide assumes the Full Node is
+  deployed in the same docker-compose stack; see section A.
+- **A poktroll account with uPOKT tokens**: Tokens can be acquired by contacting
+  the team. You are going to need a BIP39 mnemonic phrase for an existing
+  funded account.
 
-### 1. Stake your application
+### 1. Create, configure and fund your Application
+
+On the host where you started the full node container, run the commands below to
+create your account.
+
+Create a new `application` account:
+
+```bash
+poktrolld keys add application-1
+```
+
+1. Copy the mnemonic that's printed to the screen to the `APPLICATION_MNEMONIC`
+   variable in your `.env` file.
+
+   ```bash
+   export APPLICATION_MNEMONIC="foo bar ..."
+   ```
+
+2. Save the outputted address to a variable for simplicity::
+
+   ```bash
+   export APPLICATION_ADDR="pokt1..."
+   ```
+
+```bash
+poktrolld tx bank send pnf $APPLICATION_ADDR 10000upokt --chain-id=poktroll --yes
+```
+
+You can check that your address is funded correctly by running:
+
+```bash
+poktrolld query bank balances $APPLICATION_ADDR
+```
 
 Assuming the account you're planning to use for AppGate Server is already available in your local Keyring (can check with `poktrolld keys list`), create an application stake config and run the stake command. [This documentation page](https://dev.poktroll.com/configs/app_staking_config) explains what application staking config is and how it can be used. This command can be used as an example:
 
@@ -337,33 +374,69 @@ Assuming the account you're planning to use for AppGate Server is already availa
 poktrolld tx application stake-application --config=./application_stake_config_example.yaml --from=YOUR_KEY_NAME --chain-id=poktroll --yes
 ```
 
-### 2. Configure AppGate Server and environment variables
+### 2. Configure and stake your Application
 
-Using [AppGate Server config](https://dev.poktroll.com/configs/appgate_server_config) documentation as a reference, change the [appgate_config.yaml](./appgate-server-example/config/appgate_config.yaml) configuration file.
+:::tip Application staking config
 
-Also, change the value of `APPGATE_SERVER_MNEMONIC` in the `.env` file. The value should be a BIP39 mnemonic phrase of the account you're planning to use for AppGate Server.
+[dev.poktroll.com/configs/application_staking_config](https://dev.poktroll.com/configs/application_staking_config)
+explains what application staking config is and how it can be used.
 
-### 3. Prepare and run AppGate Server containers
+:::
 
-By default, we commented out `appgate-server-example` and `appgate-server-mnemonic-import` in [docker-compose.yml](./docker-compose.yml).
-Uncomment these containers so docker-compose is aware of them, and run:
+Verify that the account you're planning to use for `APPLICATION` (created above)
+is available in your local Keyring:
 
 ```bash
-docker-compose up -d
+poktrolld keys list --list-names | grep "application-1"
+```
+
+Use the configuration to stake your supplier:
+
+```bash
+poktrolld tx application stake-application --config=./application_stake_config_example.yaml --from=application-1 --chain-id=poktroll --yes
+```
+
+Verify your application is staked
+
+```bash
+poktrolld query application show-application $APPLICATION_ADDR
+```
+
+### 3. Configure and run your AppGate Server
+
+:::tip AppGate Server operation config
+
+[dev.poktroll.com/configs/appgate_server_config](https://dev.poktroll.com/configs/appgate_server_config)
+explains what the AppGate Server operation config is and how it can be used.
+
+:::
+
+Update the provided example RelayMiner operation config:
+
+```bash
+sed -i -e s/key-for-application/application-1/g appgate-server-example/config/appgate_config.yaml
+```
+
+appgate-server-example/config/appgate_config.yaml
+
+```bash
+docker-compose up -d appgate_server
 ```
 
 Check logs and confirm the node works as expected:
 
 ```bash
-docker-compose logs -f appgate-server-example
+docker-compose logs -f --tail 100 appgate_server
 ```
 
 ### 4. Send a relay
 
-You can send requests to the newly deployed AppGate Server. If there are any suppliers on the network that can provide the service,
-the request will be routed to them.
+You can send requests to the newly deployed AppGate Server. If there are any
+Suppliers on the network that can provide the service, the request will be
+routed to them.
 
-The endpoint you want to send request to is: `http://your_node:appgate_server_port/service_id`. For example, this is how the request can be routed to `etherium` service id:
+The endpoint you want to send request to is: `http://your_node:appgate_server_port/service_id`. For example, this is how the request can be routed to `ethereum`
+represented by `0021`:
 
 ```bash
 ❯ curl http://my-node:85/0021 \
