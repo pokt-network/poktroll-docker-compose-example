@@ -7,12 +7,12 @@
   - [0. Software \& Tooling](#0-software--tooling)
   - [1. Clone the Repository](#1-clone-the-repository)
   - [2. Operational Helpers](#2-operational-helpers)
-  - [3. PNF Account](#3-pnf-account)
-  - [4. Environment Variables](#4-environment-variables)
+  - [3. Environment Variables](#3-environment-variables)
 - [A. Deploying a Full Node](#a-deploying-a-full-node)
   - [1. Download Network Genesis](#1-download-network-genesis)
   - [2. Launch the Node](#2-launch-the-node)
-  - [3. Restarting a full node after re-genesis](#3-restarting-a-full-node-after-re-genesis)
+  - [3. Add PNF (funding) Account](#3-add-pnf-funding-account)
+  - [4. Restarting a full node after re-genesis](#4-restarting-a-full-node-after-re-genesis)
 - [Inspecting the Full Node](#inspecting-the-full-node)
   - [CometBFT Status](#cometbft-status)
   - [Latest Block](#latest-block)
@@ -100,27 +100,7 @@ Run the following command, or add it to your `~/.bashrc` to have access to helpe
 source helpers.sh
 ```
 
-### 3. PNF Account
-
-:::tip TODO: Faucet
-
-Change to using `faucet` instead of `pnf`
-
-:::
-
-Add the `pnf` account to environment so you can fund all of your accounts
-
-```bash
-docker exec -it poktroll-docker-compose-example-poktrolld-1 poktrolld keys add --recover -i pnf
-```
-
-When you see the `> Enter your bip39 mnemonic` prompt, paste the mnemonic
-provided by the Pocket team for testnet.
-
-When you see the `> Enter your bip39 passphrase. This is combined with the mnemonic to derive the seed. Most users should just hit enter to use the default, ""`
-prompt, hit enter without adding a passphrase. Finish funding your account by using the command below:
-
-### 4. Environment Variables
+### 3. Environment Variables
 
 Create and configure your `.env` file from the sample:
 
@@ -168,7 +148,27 @@ Monitor node activity through logs with:
 docker-compose logs -f --tail 100
 ```
 
-### 3. Restarting a full node after re-genesis
+### 3. Add PNF (funding) Account
+
+:::tip TODO: Faucet
+
+Change to using `faucet` instead of `pnf`
+
+:::
+
+Add the `pnf` account to environment so you can fund all of your accounts
+
+```bash
+poktrolld keys add --recover -i pnf
+```
+
+When you see the `> Enter your bip39 mnemonic` prompt, paste the mnemonic
+provided by the Pocket team for testnet.
+
+When you see the `> Enter your bip39 passphrase. This is combined with the mnemonic to derive the seed. Most users should just hit enter to use the default, ""`
+prompt, hit enter without adding a passphrase. Finish funding your account by using the command below:
+
+### 4. Restarting a full node after re-genesis
 
 If the team has completed a re-genesis, you will need to wipe existing data
 and restart your node from scratch. The following is a quick and easy way to
