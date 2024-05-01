@@ -7,7 +7,7 @@ if [ -z "$APPGATE_SERVER_MNEMONIC" ]; then
 fi
 
 # Check if key "key-for-appgateserver" exists
-if poktrolld --keyring-backend=test --home=/root/.poktroll/ keys show key-for-appgateserver > /dev/null 2>&1; then
+if poktrolld --keyring-backend=test --home=/root/.poktroll/ keys show key-for-appgateserver >/dev/null 2>&1; then
     echo "Key 'key-for-appgateserver' already exists."
 else
     # Add key "key-for-appgateserver" using the mnemonic

@@ -1,3 +1,3 @@
 function poktrolld() {
-    docker exec -it poktroll-docker-compose-example-poktrolld-1 poktrolld "$@"
+    docker exec -it poktrolld_full_node poktrolld "$@"
 }

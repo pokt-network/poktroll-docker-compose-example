@@ -1,34 +1,22 @@
-# Hetzner Ubuntu Tutorial
+# tl;dr Hetzner Ubuntu Setup
 
-- [Hetzner Ubuntu Tutorial](#hetzner-ubuntu-tutorial)
-- [General](#general)
-- [Pocket](#pocket)
-- [Install Docker](#install-docker)
-- [docker compose](#docker-compose)
-- [Image](#image)
+- [tl;dr Hetzner Ubuntu Setup](#tldr-hetzner-ubuntu-setup)
+  - [General](#general)
+  - [Install Docker](#install-docker)
+  - [Install docker-compose](#install-docker-compose)
+  - [Pocket Setup](#pocket-setup)
+  - [Pocket Logic](#pocket-logic)
 
-# General
+This is a tl;dr copy-pasta while Olshansky was setting up a Hetzner server.
 
-https://console.hetzner.cloud/projects/2902196/servers/46665701/overview
-Hetzner - Setting up node
+## General
 
-ssh root@65.21.250.214
+- Set up your server on [hetzner's console](https://console.hetzner.cloud/projects/)
+- `ssh root@...`
 
-# Pocket
+## Install Docker
 
-```bash
-git clone https://github.com/pokt-network/poktroll-docker-compose-example.git
-cd poktroll-docker-compose-example
-
-curl https://raw.githubusercontent.com/pokt-network/pocket-network-genesis/master/poktrolld/testnet-validated.json > poktrolld-data/config/genesis.json
-
-cp .env.sample .env
-sed -i -e s/YOUR_NODE_IP_OR_HOST/65.21.250.214/g .env
-```
-
-# Install Docker
-
-Ref: https://docs.docker.com/engine/install/ubuntu/
+Ref [here](https://docs.docker.com/engine/install/ubuntu/)
 
 ```bash
 sudo apt-get update
@@ -46,16 +34,37 @@ sudo apt-get update
 sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 ```
 
-# docker compose
+## Install docker-compose
 
-Ref: https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-compose-on-ubuntu-20-04
+Ref [here](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-compose-on-ubuntu-20-04)
 
 ```bash
 sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 ```
 
-# Image
+## Pocket Setup
 
-platform: "linux/amd64"
-https://github.com/Netflix/conductor/issues/2975#issuecomment-1137164430
+```bash
+
+docker rm $(docker ps -aq) -f
+
+
+git clone https://github.com/pokt-network/poktroll-docker-compose-example.git
+cd poktroll-docker-compose-example
+
+curl https://raw.githubusercontent.com/pokt-network/pocket-network-genesis/master/poktrolld/testnet-validated.json > poktrolld-data/config/genesis.json
+
+cp .env.sample .env
+sed -i -e s/YOUR_NODE_IP_OR_HOST/.../g .env
+```
+
+## Pocket Logic
+
+```bash
+source helpers.sh
+
+poktrolld keys add relayminer-1
+export RELAYMINER_ADDR=pokt15l3gamxkz5c5pz9ynk0xqmkq6m07k5jcn89cl9
+
+```
