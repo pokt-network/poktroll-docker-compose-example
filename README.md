@@ -139,13 +139,13 @@ running a newer version of Docker.
 Initiate the node with:
 
 ```bash
-docker-compose up -d full_node
+docker-compose up -d poktrolld
 ```
 
 Monitor node activity through logs with:
 
 ```bash
-docker-compose logs -f --tail 100 full_node
+docker-compose logs -f --tail 100 poktrolld
 ```
 
 ### 3. Add PNF (funding) Account
@@ -251,6 +251,12 @@ You can check that your address is funded correctly by running:
 poktrolld query bank balances $SUPPLIER_ADDR
 ```
 
+If you're waiting to see if your transaction has been included in a block, you can run:
+
+```bash
+poktrolld query tx --type=hash <hash>
+```
+
 ### 2. Configure and stake your Supplier
 
 :::tip Supplier staking config
@@ -270,14 +276,22 @@ poktrolld keys list --list-names | grep "supplier-1"
 Update the provided example supplier stake config:
 
 ```bash
-sed -i -e s/YOUR_NODE_IP_OR_HOST/$NODE_HOSTNAME/g ./supplier_stake_config_example.yaml
+sed -i -e s/YOUR_NODE_IP_OR_HOST/$NODE_HOSTNAME/g ./stake_configs/supplier_stake_config_example.yaml
 ```
 
 Use the configuration to stake your supplier:
 
 ```bash
-poktrolld tx supplier stake-supplier --config=./supplier_stake_config_example.yaml --from=supplier-1 --chain-id=poktroll --yes
+poktrolld tx supplier stake-supplier --config=./stake_configs/supplier_stake_config_example.yaml --from=supplier-1 --chain-id=poktroll --yes
 ```
+
+:::warning Upstaking to restake
+
+If you need to change any of the configurations in your staking config, you MUST
+increase the stake by at least one uPOKT. This is the `stake_amount` field
+in the `supplier_stake_config_example.yaml` file above.
+
+:::
 
 Verify your supplier is staked
 
@@ -313,13 +327,13 @@ Note that these were commented by default for example purposes.
 Start up the RelayMiner:
 
 ```bash
-docker-compose up -d relay_miner
+docker-compose up -d relayminer-example
 ```
 
 Check logs and confirm the node works as expected:
 
 ```bash
-docker-compose logs -f --tail 100 relay_miner
+docker-compose logs -f --tail 100 relayminer-example
 ```
 
 ## C. Deploying an AppGate Server
@@ -371,7 +385,7 @@ poktrolld query bank balances $APPLICATION_ADDR
 Assuming the account you're planning to use for AppGate Server is already available in your local Keyring (can check with `poktrolld keys list`), create an application stake config and run the stake command. [This documentation page](https://dev.poktroll.com/configs/app_staking_config) explains what application staking config is and how it can be used. This command can be used as an example:
 
 ```bash
-poktrolld tx application stake-application --config=./application_stake_config_example.yaml --from=YOUR_KEY_NAME --chain-id=poktroll --yes
+poktrolld tx application stake-application --config=./stake_configs/application_stake_config_example.yaml --from=YOUR_KEY_NAME --chain-id=poktroll --yes
 ```
 
 ### 2. Configure and stake your Application
@@ -393,7 +407,7 @@ poktrolld keys list --list-names | grep "application-1"
 Use the configuration to stake your supplier:
 
 ```bash
-poktrolld tx application stake-application --config=./application_stake_config_example.yaml --from=application-1 --chain-id=poktroll --yes
+poktrolld tx application stake-application --config=./stake_configs/application_stake_config_example.yaml --from=application-1 --chain-id=poktroll --yes
 ```
 
 Verify your application is staked
@@ -420,13 +434,13 @@ sed -i -e s/key-for-application/application-1/g appgate-server-example/config/ap
 appgate-server-example/config/appgate_config.yaml
 
 ```bash
-docker-compose up -d appgate_server
+docker-compose up -d appgate-server-example
 ```
 
 Check logs and confirm the node works as expected:
 
 ```bash
-docker-compose logs -f --tail 100 appgate_server
+docker-compose logs -f --tail 100 appgate-server-example
 ```
 
 ### 4. Send a relay

@@ -38,8 +38,8 @@ services:
         condition: service_completed_successfully
     volumes:
       - ./poktrolld-data:/root/.poktroll/
-      - ./supplier_stake_config_example.yaml:/poktroll/supplier_stake_config_example.yaml
-      - ./application_stake_config_example.yaml:/poktroll/application_stake_config_example.yaml
+      - ./stake_configs/supplier_stake_config_example.yaml:/poktroll/supplier_stake_config_example.yaml
+      - ./stake_configs/application_stake_config_example.yaml:/poktroll/application_stake_config_example.yaml
 
   # Relay Miner
   relayminer-example:
