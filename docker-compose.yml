@@ -1,21 +1,24 @@
-version: '3.8'
+version: "3.8"
 
 services:
   init-priv-validator-state:
     image: busybox
-    restart: 'no'
+    restart: "no"
     command:
       [
-        'sh',
-        '-c',
-        'mkdir -p /root/.poktroll/data/; if [ ! -f /root/.poktroll/data/priv_validator_state.json ]; then echo "{\"height\": \"0\", \"round\": 0, \"step\": 0}" > /root/.poktroll/data/priv_validator_state.json; fi; chmod -R 777 /root/.poktroll/data/'
+        "sh",
+        "-c",
+        'mkdir -p /root/.poktroll/data/; if [ ! -f /root/.poktroll/data/priv_validator_state.json ]; then echo "{\"height\": \"0\", \"round\": 0, \"step\": 0}" > /root/.poktroll/data/priv_validator_state.json; fi; chmod -R 777 /root/.poktroll/data/',
       ]
     volumes:
       - ./poktrolld-data:/root/.poktroll/
+
   # Full node
   poktrolld:
+    container_name: full_node
     image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG:-main}
     pull_policy: always
+    # platform: "linux/amd64" # for aarch64
     command:
       - start
       - --home=/root/.poktroll/
@@ -35,41 +38,38 @@ services:
         condition: service_completed_successfully
     volumes:
       - ./poktrolld-data:/root/.poktroll/
-      - ./supplier_stake_config_example.yaml:/poktroll/supplier_stake_config_example.yaml
-      - ./application_stake_config_example.yaml:/poktroll/application_stake_config_example.yaml
-  #  # Before enabling Relay Miner, make sure to add the mnemonic to `RELAYMINER_MNEMONIC` variable in .env.
-  #  #
-  #  # # Relay Miner
-  # relayminer-example:
-  #   image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG:-main}
-  #   pull_policy: always
-  #   entrypoint: ["sh", "-c", "/root/start-relayminer.sh"]
-  #   environment:
-  #     - RELAYMINER_MNEMONIC=${RELAYMINER_MNEMONIC}
-  #   ports:
-  #     # 8545 is the port RelayMiner is configured to listen on in `relayminer_config.yaml`.
-  #     - "8545:8545"
-  #   restart: unless-stopped
-  #   depends_on:
-  #     - poktrolld
-  #   volumes:
-  #     - ./relayminer-example:/root/.poktroll/
-  #     - ./start-relayminer.sh:/root/start-relayminer.sh
-  #  # Before nabling AppGate Server, make sure to add the mnemonic to `APPGATE_SERVER_MNEMONIC` variable in .env.
-  #  #
-  #  # # AppGate Server
-  # appgate-server-example:
-  #   image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG:-main}
-  #   pull_policy: always
-  #   entrypoint: ["sh", "-c", "/root/start-appgate-server.sh"]
-  #   environment:
-  #     - APPGATE_SERVER_MNEMONIC=${APPGATE_SERVER_MNEMONIC}
-  #   ports:
-  #     # 85 is the port AppGate Server is configured to listen on in `relayminer_config.yaml`.
-  #     - "85:85"
-  #   restart: unless-stopped
-  #   depends_on:
-  #     - poktrolld
-  #   volumes:
-  #     - ./appgate-server-example:/root/.poktroll/
-  #     - ./start-appgate-server.sh:/root/start-appgate-server.sh
+      - ./stake_configs:/poktroll/stake_configs
+
+  # Relay Miner
+  relayminer-example:
+    image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG:-main}
+    container_name: relay_miner
+    pull_policy: always
+    entrypoint: ["sh", "-c", "/root/start-relayminer.sh"]
+    environment:
+      - SUPPLIER_MNEMONIC=${SUPPLIER_MNEMONIC}
+    ports:
+      - "8545:8545" # 8545 is the port RelayMiner is configured to listen on in `relayminer_config.yaml`.
+    restart: unless-stopped
+    depends_on:
+      - poktrolld
+    volumes:
+      - ./relayminer-example:/root/.poktroll/
+      - ./start-relayminer.sh:/root/start-relayminer.sh
+
+  # AppGate Server
+  appgate-server-example:
+    image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG:-main}
+    container_name: appgate_server
+    pull_policy: always
+    entrypoint: ["sh", "-c", "/root/start-appgate-server.sh"]
+    environment:
+      - APPLICATION_MNEMONIC=${APPLICATION_MNEMONIC}
+    ports:
+      - "85:85" # 85 is the port AppGate Server is configured to listen on in `relayminer_config.yaml`.
+    restart: unless-stopped
+    depends_on:
+      - poktrolld
+    volumes:
+      - ./appgate-server-example:/root/.poktroll/
+      - ./start-appgate-server.sh:/root/start-appgate-server.sh
