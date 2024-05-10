@@ -111,30 +111,15 @@ cp .env.sample .env
 Update `NODE_HOSTNAME` in `.env` to the IP address or hostname of your node. For example:
 
 ```bash
-sed -i -e  s/NODE_HOSTNAME/69.42.690.420/g .env
+sed -i -e s/NODE_HOSTNAME=/NODE_HOSTNAME=69.42.690.420/g .env
 ```
 
 ## A. Deploying a Full Node
 
-### 1. Download Network Genesis
-
-The Poktrolld blockchain deploys various networks: DevNet, TestNet, MainNet, etc...
-
-Access the list of Poktrolld networks available for community participation at [Poktrolld Networks](https://github.com/pokt-network/pocket-network-genesis/tree/master/poktrolld).
-
-Download and place the `genesis.json` for your chosen network (e.g., `testnet-validated`)
-into the `poktrolld/config` directory:
-
-E.g. Testnet-validated:
-
-```bash
-curl https://raw.githubusercontent.com/pokt-network/pocket-network-genesis/master/poktrolld/testnet-validated.json > poktrolld-data/config/genesis.json
-```
-
-### 2. Launch the Node
+### 1. Launch the Node
 
 Note: You may need to replace `docker-compose` with `docker compose` if you are
-running a newer version of Docker.
+running a newer version of Docker where `docker-compose` is integrated into `docker` itself.
 
 Initiate the node with:
 
@@ -148,7 +133,7 @@ Monitor node activity through logs with:
 docker-compose logs -f --tail 100 poktrolld
 ```
 
-### 3. Add PNF (funding) Account
+### 2. Add PNF (funding) Account
 
 :::tip TODO: Faucet
 
@@ -168,7 +153,7 @@ provided by the Pocket team for testnet.
 When you see the `> Enter your bip39 passphrase. This is combined with the mnemonic to derive the seed. Most users should just hit enter to use the default, ""`
 prompt, hit enter without adding a passphrase. Finish funding your account by using the command below:
 
-### 4. Restarting a full node after re-genesis
+### 3. Restarting a full node after re-genesis
 
 If the team has completed a re-genesis, you will need to wipe existing data
 and restart your node from scratch. The following is a quick and easy way to
