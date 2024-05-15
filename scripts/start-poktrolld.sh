@@ -17,12 +17,6 @@ else
     exit 1
 fi
 
-
-# rpc.laddr 0.0 26657 -> "def 127."
-# p2p.laddr 0.0 26659 -> def 0.0 26656
-# grpc.address 0.0 26658 -> localhost:9090
-
-
 # Execute poktrolld with specified parameters
 poktrolld \
    start \

@@ -26,7 +26,6 @@ services:
       - SEEDS=${SEEDS}
     ports:
       - "26657:26657"
-      - "26658:26658"
       - "26656:26656"
     restart: unless-stopped
     depends_on:
