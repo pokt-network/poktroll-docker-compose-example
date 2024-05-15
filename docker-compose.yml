@@ -21,11 +21,12 @@ services:
     # platform: "linux/amd64" # for aarch64
     entrypoint: ["sh", "-c", "/root/start-poktrolld.sh"]
     environment:
-      - P2P_NETWORK=${P2P_NETWORK}
+      - NETWORK_NAME=${NETWORK_NAME}
+      - POKTROLLD_LOG_LEVEL=${POKTROLLD_LOG_LEVEL}
+      - SEEDS=${SEEDS}
     ports:
       - "26657:26657"
-      - "26658:26658"
-      - "26659:26659"
+      - "26656:26656"
     restart: unless-stopped
     depends_on:
       init-priv-validator-state:

@@ -76,6 +76,6 @@ sed -i -e s/YOUR_NODE_IP_OR_HOST/.../g .env
 source helpers.sh
 
 poktrolld keys add relayminer-1
-export RELAYMINER_ADDR=pokt15l3gamxkz5c5pz9ynk0xqmkq6m07k5jcn89cl9
+export SUPPLIER_ADDR=pokt15l3gamxkz5c5pz9ynk0xqmkq6m07k5jcn89cl9
 
 ```
