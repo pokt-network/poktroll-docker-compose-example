@@ -7,11 +7,11 @@ if [ -z "$APPLICATION_MNEMONIC" ]; then
 fi
 
 # Check if key "key-for-application" exists
-if poktrolld --keyring-backend=test --home=/root/.poktroll/ keys show key-for-application >/dev/null 2>&1; then
+if poktrolld --keyring-backend=test keys show key-for-application >/dev/null 2>&1; then
     echo "Key 'key-for-application' already exists."
 else
     # Add key "key-for-application" using the mnemonic
-    echo "$APPLICATION_MNEMONIC" | poktrolld --keyring-backend=test --home=/root/.poktroll/ keys add key-for-application --recover
+    echo "$APPLICATION_MNEMONIC" | poktrolld --keyring-backend=test keys add key-for-application --recover
     if [ $? -ne 0 ]; then
         echo "Failed to add key 'key-for-application'. Exiting."
         exit 1
@@ -21,6 +21,5 @@ fi
 # Execute poktrolld with specified parameters
 poktrolld \
     appgate-server \
-    --home=/root/.poktroll/ \
     --keyring-backend=test \
-    --config=/root/.poktroll/config/appgate_config.yaml
+    --config=/home/pocket/.poktroll/config/appgate_config.yaml

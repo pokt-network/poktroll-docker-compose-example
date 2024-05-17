@@ -4,26 +4,29 @@ services:
   init-priv-validator-state:
     image: busybox
     restart: "no"
-    command:
-      [
-        "sh",
-        "-c",
-        'mkdir -p /root/.poktroll/data/; if [ ! -f /root/.poktroll/data/priv_validator_state.json ]; then echo "{\"height\": \"0\", \"round\": 0, \"step\": 0}" > /root/.poktroll/data/priv_validator_state.json; fi; chmod -R 777 /root/.poktroll/data/',
-      ]
+    command: [ "sh", "/home/pocket/.poktroll/scripts/init-poktrolld.sh" ]
+    environment:
+      - NETWORK_NAME=${NETWORK_NAME}
     volumes:
-      - ./poktrolld-data:/root/.poktroll/
+      - ./poktrolld-data:/home/pocket/.poktroll/
+      - ./scripts/:/home/pocket/.poktroll/scripts
+      
+      # Necessary to change ownership of the files, as our production image does not run the process under root.
+      - ./relayminer-example:/home/pocket/.poktroll/relayminer-example
+      - ./appgate-server-example:/home/pocket/.poktroll/appgate-server-example
 
   # Full node
   poktrolld:
     container_name: full_node
-    image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG:-main}
+    image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG:-latest}
     pull_policy: always
-    # platform: "linux/amd64" # for aarch64
-    entrypoint: ["sh", "-c", "/root/start-poktrolld.sh"]
-    environment:
-      - NETWORK_NAME=${NETWORK_NAME}
-      - POKTROLLD_LOG_LEVEL=${POKTROLLD_LOG_LEVEL}
-      - SEEDS=${SEEDS}
+    entrypoint: [
+      "poktrolld",
+      "start",
+      "--p2p.external-address=${NODE_HOSTNAME}:26656",
+      "--log_level=${POKTROLLD_LOG_LEVEL}",
+      "--p2p.seeds=${SEEDS}"
+    ]
     ports:
       - "26657:26657"
       - "26656:26656"
@@ -32,16 +35,15 @@ services:
       init-priv-validator-state:
         condition: service_completed_successfully
     volumes:
-      - ./poktrolld-data:/root/.poktroll/
+      - ./poktrolld-data:/home/pocket/.poktroll/
       - ./stake_configs:/poktroll/stake_configs
-      - ./scripts/start-poktrolld.sh:/root/start-poktrolld.sh
 
   # Relay Miner
   relayminer-example:
-    image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG:-main}
+    image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG:-latest}
     container_name: relay_miner
     pull_policy: always
-    entrypoint: ["sh", "-c", "/root/start-relayminer.sh"]
+    entrypoint: ["sh", "/home/pocket/start-relayminer.sh"]
     environment:
       - SUPPLIER_MNEMONIC=${SUPPLIER_MNEMONIC}
     ports:
@@ -50,15 +52,15 @@ services:
     depends_on:
       - poktrolld
     volumes:
-      - ./relayminer-example:/root/.poktroll/
-      - ./scripts/start-relayminer.sh:/root/start-relayminer.sh
+      - ./relayminer-example:/home/pocket/.poktroll/
+      - ./scripts/start-relayminer.sh:/home/pocket/start-relayminer.sh
 
   # AppGate Server
   appgate-server-example:
-    image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG:-main}
+    image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG:-latest}
     container_name: appgate_server
     pull_policy: always
-    entrypoint: ["sh", "-c", "/root/start-appgate-server.sh"]
+    entrypoint: ["sh", "/home/pocket/start-appgate-server.sh"]
     environment:
       - APPLICATION_MNEMONIC=${APPLICATION_MNEMONIC}
     ports:
@@ -67,5 +69,5 @@ services:
     depends_on:
       - poktrolld
     volumes:
-      - ./appgate-server-example:/root/.poktroll/
-      - ./scripts/start-appgate-server.sh:/root/start-appgate-server.sh
+      - ./appgate-server-example:/home/pocket/.poktroll/
+      - ./scripts/start-appgate-server.sh:/home/pocket/start-appgate-server.sh

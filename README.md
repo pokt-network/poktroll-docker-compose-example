@@ -167,7 +167,6 @@ docker rm $(docker ps -aq) -f
 
 # Remove existing data and renew genesis
 rm -rf poktrolld-data/config/addrbook.json poktrolld-data/config/genesis.json poktrolld-data/data/
-curl https://raw.githubusercontent.com/pokt-network/pocket-network-genesis/master/poktrolld/testnet-validated.json > poktrolld-data/config/genesis.json
 
 # Re-start the node
 docker compose up -d
