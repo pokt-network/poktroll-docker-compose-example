@@ -10,10 +10,11 @@ services:
     volumes:
       - ./poktrolld-data:/home/pocket/.poktroll/
       - ./scripts/:/home/pocket/.poktroll/scripts
-      
+
       # Necessary to change ownership of the files, as our production image does not run the process under root.
       - ./relayminer-example:/home/pocket/.poktroll/relayminer-example
       - ./appgate-server-example:/home/pocket/.poktroll/appgate-server-example
+      - ./gateway-example:/home/pocket/.poktroll/gateway-example
 
   # Full node
   poktrolld:
@@ -64,10 +65,57 @@ services:
     environment:
       - APPLICATION_MNEMONIC=${APPLICATION_MNEMONIC}
     ports:
-      - "85:85" # 85 is the port AppGate Server is configured to listen on in `relayminer_config.yaml`.
+      - "85:85" # 85 is the port AppGate Server is configured to listen on in `appgate_server_config.yaml`.
     restart: unless-stopped
     depends_on:
       - poktrolld
     volumes:
       - ./appgate-server-example:/home/pocket/.poktroll/
       - ./scripts/start-appgate-server.sh:/home/pocket/start-appgate-server.sh
+  # Gateway
+  gateway-example:
+    image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG:-latest}
+    container_name: gateway
+    pull_policy: always
+    entrypoint: ["sh", "/home/pocket/start-gateway.sh"]
+    environment:
+      - GATEWAY_MNEMONIC=${GATEWAY_MNEMONIC}
+    ports:
+      - "84:84" # 84 is the port AppGate Server is configured as a gateway to listen on in `gateway_config.yaml`.
+    restart: unless-stopped
+    depends_on:
+      - poktrolld
+    volumes:
+      - ./gateway-example:/home/pocket/.poktroll/
+      - ./scripts/start-gateway.sh:/home/pocket/start-gateway.sh
+  # Prometheus
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    pull_policy: always
+    user: "0"
+    ports:
+      - "9090:9090"
+    restart: unless-stopped
+    volumes:
+      - ./prometheus/data:/prometheus
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - '--storage.tsdb.path=/prometheus'
+  # Grafana
+  grafana:
+    image: grafana/grafana-oss:latest
+    container_name: grafana
+    pull_policy: always
+    entrypoint: ["sh", "-c", "/run.sh"]
+    user: "0"
+    depends_on:
+      - prometheus
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    volumes:
+      - ./grafana/data:/var/lib/grafana
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+      - ./grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml

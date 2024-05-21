@@ -5,11 +5,11 @@ query_node_rpc_url: tcp://poktrolld:26657
 # Pocket node URL that exposes the Cosmos gRPC service, dedicated to querying purposes.
 query_node_grpc_url: tcp://poktrolld:9090
 # The name of the key (in the keyring) that will be used to sign relays
-signing_key: key-for-application
-# Whether the server should sign all incoming requests with its own ring (for applications)
-self_signing: true
+signing_key: key-for-gateway
+# Whether the server should sign all incoming requests with its own ring (set to false for gateways)
+self_signing: false
 # The host and port that the appgate server will listen on
-listening_endpoint: http://0.0.0.0:85
+listening_endpoint: http://0.0.0.0:84
 # Prometheus exporter configuration
 metrics:
   # Turn on/off the metrics exporter
