@@ -26,7 +26,7 @@
   - [2. Configure and stake your Application](#2-configure-and-stake-your-application)
   - [3. Configure and run your AppGate Server](#3-configure-and-run-your-appgate-server)
   - [4. Send a relay](#4-send-a-relay)
-- [C. Deploying an Gateway Server](#c-deploying-an-gateway-server)
+- [D. Deploying an Gateway Server](#d-deploying-an-gateway-server)
   - [0. Prerequisites for a Gateway Server](#0-prerequisites-for-a-gateway-server)
   - [1. Create, configure and fund your Gateway](#1-create-configure-and-fund-your-gateway)
   - [2. Configure and stake your Gateway](#2-configure-and-stake-your-gateway)
@@ -458,11 +458,11 @@ curl http://$NODE_HOSTNAME:85/0021 \
 
 You should expect a result that looks like so:
 
-```
+```bash
 {"jsonrpc":"2.0","id":1,"result":"0x1289571"}
 ```
 
-## C. Deploying an Gateway Server
+## D. Deploying an Gateway Server
 
 Gateway Server allows to use services provided by other operators on Pocket Network.
 
@@ -516,12 +516,6 @@ You can check that your address is funded correctly by running:
 poktrolld query bank balances $GATEWAY_ADDR
 ```
 
-Assuming the account you're planning to use for Gateway Server is already available in your local Keyring (can check with `poktrolld keys list`), create an application stake config and run the stake command. [This documentation page](https://dev.poktroll.com/operate/configs/gateway_staking_config) explains what application staking config is and how it can be used. This command can be used as an example:
-
-```bash
-poktrolld tx gateway stake-gateway --config=./stake_configs/gateway_stake_config_example.yaml --from=gateway-1 --chain-id=poktroll --yes
-```
-
 ### 2. Configure and stake your Gateway
 
 :::tip Gateway staking config
@@ -541,7 +535,7 @@ poktrolld keys list --list-names | grep "gateway-1"
 Use the configuration to stake your gateway:
 
 ```bash
-poktrolld tx application stake-gateway --config=./stake_configs/gateway_stake_config_example.yaml --from=gateway-1 --chain-id=poktroll --yes
+poktrolld tx gateway stake-gateway --config=./stake_configs/gateway_stake_config_example.yaml --from=gateway-1 --chain-id=poktroll --yes
 ```
 
 Verify your gateway is staked
@@ -593,6 +587,6 @@ curl http://$NODE_HOSTNAME:84/0021?applicationAddr=$APPLICATION_ADDR \
 
 You should expect a result that looks like so:
 
-```
+```bash
 {"jsonrpc":"2.0","id":1,"result":"0x1289571"}
 ```
