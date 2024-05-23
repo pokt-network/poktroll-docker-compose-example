@@ -26,6 +26,13 @@
   - [2. Configure and stake your Application](#2-configure-and-stake-your-application)
   - [3. Configure and run your AppGate Server](#3-configure-and-run-your-appgate-server)
   - [4. Send a relay](#4-send-a-relay)
+- [D. Deploying an Gateway Server](#d-deploying-an-gateway-server)
+  - [0. Prerequisites for a Gateway Server](#0-prerequisites-for-a-gateway-server)
+  - [1. Create, configure and fund your Gateway](#1-create-configure-and-fund-your-gateway)
+  - [2. Configure and stake your Gateway](#2-configure-and-stake-your-gateway)
+  - [3. Configure and run your Gateway Server](#3-configure-and-run-your-gateway-server)
+  - [6. Delegate your Application to the Gateway](#6-delegate-your-application-to-the-gateway)
+  - [5. Send a relay](#5-send-a-relay)
 
 ## Key Terms
 
@@ -252,7 +259,7 @@ poktrolld query tx --type=hash <hash>
 
 :::tip Supplier staking config
 
-[dev.poktroll.com/configs/supplier_staking_config](https://dev.poktroll.com/configs/supplier_staking_config)
+[dev.poktroll.com/operate/configs/supplier_staking_config](https://dev.poktroll.com/operate/configs/supplier_staking_config)
 explains what supplier staking config is and how it can be used.
 
 :::
@@ -294,7 +301,7 @@ poktrolld query supplier show-supplier $SUPPLIER_ADDR
 
 :::tip RelayMiner operation config
 
-[dev.poktroll.com/configs/relayminer_config](https://dev.poktroll.com/configs/relayminer_config)
+[dev.poktroll.com/operate/configs/relayminer_config](https://dev.poktroll.com/operate/configs/relayminer_config)
 explains what the RelayMiner operation config is and how it can be used.
 
 :::
@@ -378,7 +385,7 @@ You can check that your address is funded correctly by running:
 poktrolld query bank balances $APPLICATION_ADDR
 ```
 
-Assuming the account you're planning to use for AppGate Server is already available in your local Keyring (can check with `poktrolld keys list`), create an application stake config and run the stake command. [This documentation page](https://dev.poktroll.com/configs/app_staking_config) explains what application staking config is and how it can be used. This command can be used as an example:
+Assuming the account you're planning to use for AppGate Server is already available in your local Keyring (can check with `poktrolld keys list`), create an application stake config and run the stake command. [This documentation page](https://dev.poktroll.com/operate/configs/app_staking_config) explains what application staking config is and how it can be used. This command can be used as an example:
 
 ```bash
 poktrolld tx application stake-application --config=./stake_configs/application_stake_config_example.yaml --from=application-1 --chain-id=poktroll --yes
@@ -388,7 +395,7 @@ poktrolld tx application stake-application --config=./stake_configs/application_
 
 :::tip Application staking config
 
-[dev.poktroll.com/configs/application_staking_config](https://dev.poktroll.com/configs/application_staking_config)
+[dev.poktroll.com/operate/configs/application_staking_config](https://dev.poktroll.com/operate/configs/application_staking_config)
 explains what application staking config is and how it can be used.
 
 :::
@@ -400,7 +407,7 @@ is available in your local Keyring:
 poktrolld keys list --list-names | grep "application-1"
 ```
 
-Use the configuration to stake your supplier:
+Use the configuration to stake your application:
 
 ```bash
 poktrolld tx application stake-application --config=./stake_configs/application_stake_config_example.yaml --from=application-1 --chain-id=poktroll --yes
@@ -416,7 +423,7 @@ poktrolld query application show-application $APPLICATION_ADDR
 
 :::tip AppGate Server operation config
 
-[dev.poktroll.com/configs/appgate_server_config](https://dev.poktroll.com/configs/appgate_server_config)
+[dev.poktroll.com/operate/configs/appgate_server_config](https://dev.poktroll.com/operate/configs/appgate_server_config)
 explains what the AppGate Server operation config is and how it can be used.
 
 :::
@@ -451,6 +458,135 @@ curl http://$NODE_HOSTNAME:85/0021 \
 
 You should expect a result that looks like so:
 
+```bash
+{"jsonrpc":"2.0","id":1,"result":"0x1289571"}
 ```
+
+## D. Deploying an Gateway Server
+
+Gateway Server allows to use services provided by other operators on Pocket Network.
+
+### 0. Prerequisites for a Gateway Server
+
+- **Full Node**: This Gateway Server deployment guide assumes the Full Node is
+  deployed in the same docker-compose stack; see section A.
+- **A poktroll account with uPOKT tokens**: Tokens can be acquired by contacting
+  the team. You are going to need a BIP39 mnemonic phrase for an existing
+  funded account.
+
+### 1. Create, configure and fund your Gateway
+
+On the host where you started the full node container, run the commands below to
+create your account.
+
+Create a new `gateway` account:
+
+```bash
+poktrolld keys add gateway-1
+```
+
+1. Copy the mnemonic that's printed to the screen to the `GATEWAY_MNEMONIC`
+   variable in your `.env` file.
+
+   ```bash
+   export GATEWAY_MNEMONIC="foo bar ..."
+   ```
+
+2. Save the outputted address to a variable for simplicity::
+
+   ```bash
+   export GATEWAY_ADDR="pokt1..."
+   ```
+
+Make sure to:
+
+```bash
+  source .env
+```
+
+And fund your gateway account:
+
+```bash
+poktrolld tx bank send pnf $GATEWAY_ADDR 10000upokt --chain-id=poktroll --yes
+```
+
+You can check that your address is funded correctly by running:
+
+```bash
+poktrolld query bank balances $GATEWAY_ADDR
+```
+
+### 2. Configure and stake your Gateway
+
+:::tip Gateway staking config
+
+[dev.poktroll.com/operate/configs/gateway_staking_config](https://dev.poktroll.com/operate/configs/gateway_staking_config)
+explains what gateway staking config is and how it can be used.
+
+:::
+
+Verify that the account you're planning to use for `GATEWAY` (created above)
+is available in your local Keyring:
+
+```bash
+poktrolld keys list --list-names | grep "gateway-1"
+```
+
+Use the configuration to stake your gateway:
+
+```bash
+poktrolld tx gateway stake-gateway --config=./stake_configs/gateway_stake_config_example.yaml --from=gateway-1 --chain-id=poktroll --yes
+```
+
+Verify your gateway is staked
+
+```bash
+poktrolld query gateway show-gateway $GATEWAY_ADDR
+```
+
+### 3. Configure and run your Gateway Server
+
+:::tip Gateway Server operation config
+
+[dev.poktroll.com/operate/configs/appgate_server_config](https://dev.poktroll.com/operate/configs/appgate_server_config)
+explains what the Gateway Server operation config is and how it can be used.
+
+:::
+
+appgate-server-example/config/gateway_config.yaml
+
+```bash
+docker-compose up -d gateway-example
+```
+
+Check logs and confirm the node works as expected:
+
+```bash
+docker-compose logs -f --tail 100 gateway-example
+```
+
+### 6. Delegate your Application to the Gateway
+
+poktrolld tx application delegate-to-gateway $GATEWAY_ADDR --from=application-1 --chain-id=poktroll --chain-id=poktroll --yes
+
+### 5. Send a relay
+
+You can send requests to the newly deployed Gateway Server. If there are any
+Suppliers on the network that can provide the service, the request will be
+routed to them.
+
+The endpoint you want to send request to is: `http://your_node:gateway_server_port/service_id`. For example, this is how the request can be routed to `ethereum`
+represented by `0021`:
+
+```bash
+curl http://$NODE_HOSTNAME:84/0021?applicationAddr=$APPLICATION_ADDR \
+  -X POST \
+  -H "Content-Type: application/json" \
+  --data '{"method":"eth_blockNumber","params":[],"id":1,"jsonrpc":"2.0"}'
+```
+
+You should expect a result that looks like so:
+
+```bash
 {"jsonrpc":"2.0","id":1,"result":"0x1289571"}
 ```
