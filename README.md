@@ -10,7 +10,7 @@
   - [3. Environment Variables](#3-environment-variables)
 - [A. Deploying a Full Node](#a-deploying-a-full-node)
   - [1. Launch the Node](#1-launch-the-node)
-  - [2. Fund Accounts via Faucet](https://github.com/pokt-network/poktroll-docker-compose-example/edit/main/README.md#2-fund-accounts-via-faucet-faucet)
+  - [2. Fund Accounts via Faucet](https://github.com/pokt-network/poktroll-docker-compose-example/edit/main/README.md#2-fund-accounts-via-faucet)
   - [3. Restarting a full node after re-genesis](#3-restarting-a-full-node-after-re-genesis)
 - [Inspecting the Full Node](#inspecting-the-full-node)
   - [CometBFT Status](#cometbft-status)
@@ -139,7 +139,7 @@ Monitor node activity through logs with:
 docker-compose logs -f --tail 100 poktrolld
 ```
 
-### 2. Fund Accounts via Faucet [Faucet](https://faucet.testnet.pokt.network/)
+### 2. Fund Accounts via [Faucet](https://faucet.testnet.pokt.network/)
 
 ### 3. Restarting a full node after re-genesis
 
