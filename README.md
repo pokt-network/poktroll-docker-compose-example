@@ -1,7 +1,7 @@
 # Poktrolld Docker-Compose Example <!-- omit in toc -->
 
-- [Key Terms](#key-terms)
 - [TODOs](#todos)
+- [Key Terms](#key-terms)
 - [Understanding Actors in the Shannon upgrade](#understanding-actors-in-the-shannon-upgrade)
 - [Prerequisites](#prerequisites)
   - [0. Software \& Tooling](#0-software--tooling)
@@ -10,11 +10,15 @@
   - [3. Environment Variables](#3-environment-variables)
 - [A. Deploying a Full Node](#a-deploying-a-full-node)
   - [1. Launch the Node](#1-launch-the-node)
-  - [2. Fund Accounts via Faucet](https://github.com/pokt-network/poktroll-docker-compose-example/edit/main/README.md#2-fund-accounts-via-faucet)
-  - [3. Restarting a full node after re-genesis](#3-restarting-a-full-node-after-re-genesis)
-- [Inspecting the Full Node](#inspecting-the-full-node)
+- [2. Inspecting the Full Node](#2-inspecting-the-full-node)
   - [CometBFT Status](#cometbft-status)
   - [Latest Block](#latest-block)
+  - [Watch the height](#watch-the-height)
+  - [3. Get a way to fund your accounts](#3-get-a-way-to-fund-your-accounts)
+    - [3.1 Funding using a Faucet](#31-funding-using-a-faucet)
+    - [\[Requires Grove Team Support\] 3.2 Funding using faucet account](#requires-grove-team-support-32-funding-using-faucet-account)
+  - [4. Restarting a full node after re-genesis](#4-restarting-a-full-node-after-re-genesis)
+  - [5. Docker image updates](#5-docker-image-updates)
 - [B. Creating a Supplier and Deploying a RelayMiner](#b-creating-a-supplier-and-deploying-a-relayminer)
   - [0. Prerequisites for a RelayMiner](#0-prerequisites-for-a-relayminer)
   - [1. Create, configure and fund a Supplier account](#1-create-configure-and-fund-a-supplier-account)
@@ -34,6 +38,16 @@
   - [6. Delegate your Application to the Gateway](#6-delegate-your-application-to-the-gateway)
   - [5. Send a relay](#5-send-a-relay)
 
+## TODOs
+
+- [ ] Copy-paste the image from [Shannon actors documentation](https://dev.poktroll.com/actors) here
+- [ ] Move this documentation to [dev.poktroll.com](https://dev.poktroll.com)
+- [ ] Create a table comparing the actors in `Morse` and `Shannon`
+- [ ] Simplify the copy-pasta commands by leveraging `helpers.sh`
+- [ ] Publicly expose [this document](https://www.notion.so/buildwithgrove/How-to-re-genesis-a-Shannon-TestNet-a6230dd8869149c3a4c21613e3cfad15?pvs=4)
+      on how to do a re-genesis
+- [ ] Pre-stake some applications on TestNet others can reuse to get started sooner
+
 ## Key Terms
 
 - `Morse` - The current version of the Pocket Network MainNet (a.k.a v0).
@@ -52,18 +66,9 @@
 
 For more details, please refer to the [Shannon actors documentation](https://dev.poktroll.com/actors).
 
-## TODOs
-
-- [ ] Copy-paste the image from [Shannon actors documentation](https://dev.poktroll.com/actors) here
-- [ ] Move this documentation to dev.poktroll.com
-- [ ] Create a table comparing the actors in `Morse` and `Shannon`
-- [ ] Simplify the copy-pasta commands by leveraging `helpers.sh`
-- [ ] Publicly expose [this document](https://www.notion.so/buildwithgrove/How-to-re-genesis-a-Shannon-TestNet-a6230dd8869149c3a4c21613e3cfad15?pvs=4)
-      on how to do a re-genesis
-
 ## Understanding Actors in the Shannon upgrade
 
-For those familiar with `Morse`, Pocket Network Mainnet,, the introduction of
+For those familiar with `Morse`, Pocket Network Mainnet, the introduction of
 multiple node types in the upcoming `Shannon` requires some explanation.
 
 In `Shannon`, the `Supplier` role is separated from the `Full node` role.
@@ -80,7 +85,7 @@ For more details, please refer to the [Shannon actors documentation](https://dev
 
 ## Prerequisites
 
-_Note: he system must be capable of exposing ports to the internet for
+_Note: the system must be capable of exposing ports to the internet for
 peer-to-peer communication._
 
 ### 0. Software & Tooling
@@ -124,8 +129,8 @@ sed -i -e s/NODE_HOSTNAME=/NODE_HOSTNAME=69.42.690.420/g .env
 
 ### 1. Launch the Node
 
-Note: You may need to replace `docker-compose` with `docker compose` if you are
-running a newer version of Docker where `docker-compose` is integrated into `docker` itself.
+_Note: You may need to replace `docker-compose` with `docker compose` if you are
+running a newer version of Docker where `docker-compose` is integrated into `docker` itself._
 
 Initiate the node with:
 
@@ -139,9 +144,56 @@ Monitor node activity through logs with:
 docker-compose logs -f --tail 100 poktrolld
 ```
 
-### 2. Fund Accounts via [Faucet](https://faucet.testnet.pokt.network/)
+## 2. Inspecting the Full Node
 
-### 3. Restarting a full node after re-genesis
+If you run `docker ps`, you should see a `full_node` running which you can inspect
+using the commands below.
+
+### CometBFT Status
+
+```bash
+curl -s -X POST localhost:26657/status | jq
+```
+
+### Latest Block
+
+```bash
+curl -s -X POST localhost:26657/block | jq
+```
+
+### Watch the height
+
+```bash
+watch -n 1 "curl -s -X POST localhost:26657/block | jq '.result.block.header.height'"
+```
+
+### 3. Get a way to fund your accounts
+
+Throughout these instructions, you will need to fund your account with tokens
+at multiple points in time.
+
+#### 3.1 Funding using a Faucet
+
+When you need to fund an account, you can make use of the [Faucet](https://faucet.testnet.pokt.network/).
+
+#### [Requires Grove Team Support] 3.2 Funding using faucet account
+
+If you require a larger amount of tokens or are a core contributor, you can add the `faucet`
+account to fund things yourself directly.
+
+```bash
+poktrolld keys add --recover -i faucet
+```
+
+When you see the `> Enter your bip39 mnemonic` prompt, paste the mnemonic
+provided by the Pocket team for testnet.
+
+When you see the `> Enter your bip39 passphrase. This is combined with the mnemonic to derive the seed. Most users should just hit enter to use the default, ""`
+prompt, hit enter without adding a passphrase. Finish funding your account by using the command below:
+
+You can view the balance of the faucet address at [shannon.testnet.pokt.network/](https://shannon.testnet.pokt.network/).
+
+### 4. Restarting a full node after re-genesis
 
 If the team has completed a re-genesis, you will need to wipe existing data
 and restart your node from scratch. The following is a quick and easy way to
@@ -157,37 +209,29 @@ docker rm $(docker ps -aq) -f
 rm -rf poktrolld-data/config/addrbook.json poktrolld-data/config/genesis.json poktrolld-data/data/
 
 # Re-start the node
-docker compose up -d
+docker-compose up -d
 docker-compose logs -f --tail 100
 ```
 
-## Inspecting the Full Node
+### 5. Docker image updates
 
-### CometBFT Status
-
-```bash
-curl -s -X POST localhost:26657/status | jq
-```
-
-### Latest Block
-
-```bash
-curl -s -X POST localhost:26657/block | jq
-```
+The `.env` file contains `POKTROLLD_IMAGE_TAG` which can be updated based on the
+images available on [ghcr](https://github.com/pokt-network/poktroll/pkgs/container/poktrolld/versions)
+to update the version of the `full_node` deployed.
 
 ## B. Creating a Supplier and Deploying a RelayMiner
 
-Supplier is an on-chain record that advertises services it'll provide.
+A Supplier is an on-chain record that advertises services it'll provide.
 
-RelayMiner is an operator / service that provides services to offer on the Pocket Network.
+A RelayMiner is an operator / service that provides services to offer on the Pocket Network.
 
 ### 0. Prerequisites for a RelayMiner
 
 - **Full Node**: This RelayMiner deployment guide assumes the Full Node is
-  deployed in the same docker-compose stack; see section A.
+  deployed in the same `docker-compose` stack; see section (A).
 - **A poktroll account with uPOKT tokens**: Tokens can be acquired by contacting
-  the team. You are going to need a BIP39 mnemonic phrase for an existing
-  funded account.
+  the team or using the faucet. You are going to need a BIP39 mnemonic phrase for
+  an existing funded account before continuing below.
 
 ### 1. Create, configure and fund a Supplier account
 
@@ -222,7 +266,7 @@ source .env
 And fund your supplier account:
 
 ```bash
-poktrolld tx bank send pnf $SUPPLIER_ADDR 10000upokt --chain-id=poktroll --yes
+poktrolld tx bank send faucet $SUPPLIER_ADDR 10000upokt --chain-id=poktroll --yes
 ```
 
 You can check that your address is funded correctly by running:
@@ -358,7 +402,7 @@ Make sure to:
 And fund your application account:
 
 ```bash
-poktrolld tx bank send pnf $APPLICATION_ADDR 10000upokt --chain-id=poktroll --yes
+poktrolld tx bank send faucet $APPLICATION_ADDR 10000upokt --chain-id=poktroll --yes
 ```
 
 You can check that your address is funded correctly by running:
@@ -489,7 +533,7 @@ Make sure to:
 And fund your gateway account:
 
 ```bash
-poktrolld tx bank send pnf $GATEWAY_ADDR 10000upokt --chain-id=poktroll --yes
+poktrolld tx bank send faucet $GATEWAY_ADDR 10000upokt --chain-id=poktroll --yes
 ```
 
 You can check that your address is funded correctly by running:
