@@ -1,10 +1,8 @@
-version: "3.8"
-
 services:
   init-priv-validator-state:
     image: busybox
     restart: "no"
-    command: [ "sh", "/home/pocket/.poktroll/scripts/init-poktrolld.sh" ]
+    command: ["sh", "/home/pocket/.poktroll/scripts/init-poktrolld.sh"]
     environment:
       - NETWORK_NAME=${NETWORK_NAME}
     volumes:
@@ -21,13 +19,14 @@ services:
     container_name: full_node
     image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG:-latest}
     pull_policy: always
-    entrypoint: [
-      "poktrolld",
-      "start",
-      "--p2p.external-address=${NODE_HOSTNAME}:26656",
-      "--log_level=${POKTROLLD_LOG_LEVEL}",
-      "--p2p.seeds=${SEEDS}"
-    ]
+    entrypoint:
+      [
+        "poktrolld",
+        "start",
+        "--p2p.external-address=${NODE_HOSTNAME}:26656",
+        "--log_level=${POKTROLLD_LOG_LEVEL}",
+        "--p2p.seeds=${SEEDS}",
+      ]
     ports:
       - "26657:26657"
       - "26656:26656"
@@ -88,6 +87,7 @@ services:
     volumes:
       - ./gateway-example:/home/pocket/.poktroll/
       - ./scripts/start-gateway.sh:/home/pocket/start-gateway.sh
+
   # Prometheus
   prometheus:
     image: prom/prometheus:latest
@@ -102,7 +102,8 @@ services:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
-      - '--storage.tsdb.path=/prometheus'
+      - "--storage.tsdb.path=/prometheus"
+
   # Grafana
   grafana:
     image: grafana/grafana-oss:latest
