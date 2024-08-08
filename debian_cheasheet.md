@@ -1,4 +1,4 @@
-# tl;dr Vultr Debian Setup <!-- omit in toc -->
+# tl;dr Debian Cheat Sheet <!-- omit in toc -->
 
 :::warning Olshansky's docs
 
