@@ -1,6 +1,7 @@
 # Poktrolld Docker-Compose Example <!-- omit in toc -->
 
 - [TODOs](#todos)
+- [Debian Cheat Sheet](#debian-cheat-sheet)
 - [Key Terms](#key-terms)
 - [Understanding Actors in the Shannon upgrade](#understanding-actors-in-the-shannon-upgrade)
 - [Prerequisites](#prerequisites)
@@ -47,6 +48,12 @@
 - [ ] Publicly expose [this document](https://www.notion.so/buildwithgrove/How-to-re-genesis-a-Shannon-TestNet-a6230dd8869149c3a4c21613e3cfad15?pvs=4)
       on how to do a re-genesis
 - [ ] Pre-stake some applications on TestNet others can reuse to get started sooner
+
+## Debian Cheat Sheet
+
+This document has a lot of details and explanations. If you're looking for a
+copy-paste quickstart guide to set all of it up on a Debian server, check out
+the [Vultr Debian Setup](./debian_cheasheet.md) guide.
 
 ## Key Terms
 
@@ -167,6 +174,8 @@ curl -s -X POST localhost:26657/block | jq
 watch -n 1 "curl -s -X POST localhost:26657/block | jq '.result.block.header.height'"
 ```
 
+You can compare the height relative to the [shannon testnet explorer](https://shannon.testnet.pokt.network/poktroll/block).
+
 ### 3. Get a way to fund your accounts
 
 Throughout these instructions, you will need to fund your account with tokens
@@ -263,7 +272,8 @@ Make sure to:
 source .env
 ```
 
-And fund your supplier account:
+Add funds to your supplier account by either going to the [faucet](https://faucet.testnet.pokt.network)
+or using the `faucet` account directly if you have access to it:
 
 ```bash
 poktrolld tx bank send faucet $SUPPLIER_ADDR 10000upokt --chain-id=poktroll --yes
@@ -306,7 +316,7 @@ sed -i -e s/YOUR_NODE_IP_OR_HOST/$NODE_HOSTNAME/g ./stake_configs/supplier_stake
 Use the configuration to stake your supplier:
 
 ```bash
-poktrolld tx supplier stake-supplier --config=./stake_configs/supplier_stake_config_example.yaml --from=supplier-1 --chain-id=poktroll --yes
+poktrolld tx supplier stake-supplier --config=/poktroll/stake_configs/supplier_stake_config_example.yaml --from=supplier-1 --chain-id=poktroll --yes
 ```
 
 :::warning Upstaking to restake
@@ -342,7 +352,7 @@ Update the `backend_url` in `relayminer_config.yaml` with a valid `0021` (i.e. E
 service URL. We suggest using your own node, but you can get one from Grove for testing purposes.
 
 ```bash
-sed -i -e s/backend_url: ""/backend_url: "https://eth-mainnet.rpc.grove.city/v1/<APP_ID>"/g relayminer-example/config/relayminer_config.yaml
+sed -i "s|backend_url:\".*\"|backend_url: \"https://eth-mainnet.rpc.grove.city/v1/<APP_ID>\"|g" relayminer-example/config/relayminer_config.yaml
 ```
 
 Start up the RelayMiner:
@@ -399,7 +409,8 @@ Make sure to:
   source .env
 ```
 
-And fund your application account:
+Add funds to your application account by either going to the [faucet](https://faucet.testnet.pokt.network)
+or using the `faucet` account directly if you have access to it:
 
 ```bash
 poktrolld tx bank send faucet $APPLICATION_ADDR 10000upokt --chain-id=poktroll --yes
@@ -409,12 +420,6 @@ You can check that your address is funded correctly by running:
 
 ```bash
 poktrolld query bank balances $APPLICATION_ADDR
-```
-
-Assuming the account you're planning to use for AppGate Server is already available in your local Keyring (can check with `poktrolld keys list`), create an application stake config and run the stake command. [This documentation page](https://dev.poktroll.com/operate/configs/app_staking_config) explains what application staking config is and how it can be used. This command can be used as an example:
-
-```bash
-poktrolld tx application stake-application --config=./stake_configs/application_stake_config_example.yaml --from=application-1 --chain-id=poktroll --yes
 ```
 
 ### 2. Configure and stake your Application
@@ -436,7 +441,7 @@ poktrolld keys list --list-names | grep "application-1"
 Use the configuration to stake your application:
 
 ```bash
-poktrolld tx application stake-application --config=./stake_configs/application_stake_config_example.yaml --from=application-1 --chain-id=poktroll --yes
+poktrolld tx application stake-application --config=/poktroll/stake_configs/application_stake_config_example.yaml --from=application-1 --chain-id=poktroll --yes
 ```
 
 Verify your application is staked
@@ -530,7 +535,8 @@ Make sure to:
   source .env
 ```
 
-And fund your gateway account:
+Add funds to your gateway account by either going to the [faucet](https://faucet.testnet.pokt.network)
+or using the `faucet` account directly if you have access to it:
 
 ```bash
 poktrolld tx bank send faucet $GATEWAY_ADDR 10000upokt --chain-id=poktroll --yes
@@ -561,7 +567,7 @@ poktrolld keys list --list-names | grep "gateway-1"
 Use the configuration to stake your gateway:
 
 ```bash
-poktrolld tx gateway stake-gateway --config=./stake_configs/gateway_stake_config_example.yaml --from=gateway-1 --chain-id=poktroll --yes
+poktrolld tx gateway stake-gateway --config=/poktroll/stake_configs/gateway_stake_config_example.yaml --from=gateway-1 --chain-id=poktroll --yes
 ```
 
 Verify your gateway is staked
