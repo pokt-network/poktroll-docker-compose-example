@@ -15,3 +15,4 @@ appgate-server-example/config/client.toml
 appgate-server-example/config/config.toml
 .env
 */keyring-test/*
+.vscode
