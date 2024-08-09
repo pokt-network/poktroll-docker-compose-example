@@ -19,6 +19,7 @@ It is not intended to act as proper documentation so use at your own risk.
 - [Stake a Supplier \& Deploy a RelayMiner](#stake-a-supplier--deploy-a-relayminer)
 - [Stake an Application \& Deploy an AppGate Server](#stake-an-application--deploy-an-appgate-server)
 - [Send a Relay](#send-a-relay)
+  - [Ensure you get a response](#ensure-you-get-a-response)
 
 ## Deploy your server
 
@@ -72,10 +73,14 @@ cd poktroll-docker-compose-example
 
 ```bash
 echo "source $(pwd)/helpers.sh" >> ~/.bashrc
+source ~/.bashrc
+
+EXTERNAL_IP=$(curl -4 ifconfig.me/ip)
 
 cp .env.sample .env
-sed -i -e s/NODE_HOSTNAME=/NODE_HOSTNAME=104.207.159.194/g .env
+sed -i -e s/NODE_HOSTNAME=/NODE_HOSTNAME=$EXTERNAL_IP/g .env
 echo "source $(pwd)/.env" >> ~/.bashrc
+source ~/.bashrc
 ```
 
 ## Start up the full node
@@ -83,7 +88,7 @@ echo "source $(pwd)/.env" >> ~/.bashrc
 ```bash
 docker compose up -d poktrolld poktrolld
 # Optional: watch the block height sync up & logs
-docker-compose logs -f --tail 100 poktrolld
+docker logs -f --tail 100 full_node
 watch_height
 ```
 
@@ -154,7 +159,7 @@ sed -i -e "s|backend_url: \".*\"|backend_url: \"https://eth-mainnet.rpc.grove.ci
 sed -i -e s/key-for-supplier1/supplier/g relayminer-example/config/relayminer_config.yaml
 docker-compose up -d relayminer-example
 # OPTIONALLY view the logs
-docker compose logs -f --tail 100 relayminer-example
+docker logs -f --tail 100 relay_miner
 ```
 
 ## Stake an Application & Deploy an AppGate Server
@@ -168,7 +173,7 @@ poktrolld query application show-application $APPLICATION_ADDR
 # Start the appgate server
 docker compose up -d appgate-server-example
 # OPTIONALLY view the logs
-docker compose logs -f --tail 100 appgate-server-example
+docker logs -f --tail 100 appgate_server
 ```
 
 ## Send a Relay
@@ -178,4 +183,19 @@ curl http://$NODE_HOSTNAME:85/0021 \
   -X POST \
   -H "Content-Type: application/json" \
   --data '{"method":"eth_blockNumber","params":[],"id":1,"jsonrpc":"2.0"}'
+```
+
+### Ensure you get a response
+
+To ensure you get a response, run the request a few times.
+
+```bash
+for i in {1..10}; do
+  curl http://$NODE_HOSTNAME:85/0021 \
+    -X POST \
+    -H "Content-Type: application/json" \
+    --data '{"method":"eth_blockNumber","params":[],"id":1,"jsonrpc":"2.0"}' \
+    --max-time 1
+  echo ""
+done
 ```
