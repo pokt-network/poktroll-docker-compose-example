@@ -38,6 +38,7 @@
   - [3. Configure and run your Gateway Server](#3-configure-and-run-your-gateway-server)
   - [6. Delegate your Application to the Gateway](#6-delegate-your-application-to-the-gateway)
   - [5. Send a relay](#5-send-a-relay)
+    - [5.1 Ensure you get a response](#51-ensure-you-get-a-response)
 
 ## TODOs
 
@@ -622,3 +623,25 @@ You should expect a result that looks like so:
 ```bash
 {"jsonrpc":"2.0","id":1,"result":"0x1289571"}
 ```
+
+#### 5.1 Ensure you get a response
+
+To ensure you get a response, you may need to run the request a few times:
+
+```bash
+for i in {1..10}; do
+  curl http://$NODE_HOSTNAME:85/0021 \
+    -X POST \
+    -H "Content-Type: application/json" \
+    --data '{"method":"eth_blockNumber","params":[],"id":1,"jsonrpc":"2.0"}' \
+    --max-time 1
+  echo ""
+done
+```
+
+Why?
+
+- Suppliers may have been staked, but the RelayMiner is no longer running.
+- Pocket does not currently have on-chain quality-of-service
+- Pocket does not currently have supplier jailing
+- You can follow along with [buildwithgrove/path](https://github.com/buildwithgrove/path) for what we'll open source.
