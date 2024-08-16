@@ -312,6 +312,7 @@ Update the provided example supplier stake config:
 
 ```bash
 sed -i -e s/YOUR_NODE_IP_OR_HOST/$NODE_HOSTNAME/g ./stake_configs/supplier_stake_config_example.yaml
+sed -i -e s/YOUR_OWNER_ADDRESS/$SUPPLIER_ADDR/g ./stake_configs/supplier_stake_config_example.yaml
 ```
 
 Use the configuration to stake your supplier:

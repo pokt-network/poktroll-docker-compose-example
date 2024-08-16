@@ -20,6 +20,12 @@ It is not intended to act as proper documentation so use at your own risk.
 - [Stake an Application \& Deploy an AppGate Server](#stake-an-application--deploy-an-appgate-server)
 - [Send a Relay](#send-a-relay)
   - [Ensure you get a response](#ensure-you-get-a-response)
+- [Managing a re-genesis](#managing-a-re-genesis)
+  - [Full Nodes](#full-nodes)
+  - [Fund the same accounts](#fund-the-same-accounts)
+    - [Faucet is not ready and you need to fund the accounts manually](#faucet-is-not-ready-and-you-need-to-fund-the-accounts-manually)
+  - [Start the RelayMiner](#start-the-relayminer)
+  - [Start the AppGate Server](#start-the-appgate-server)
 
 ## Deploy your server
 
@@ -146,10 +152,13 @@ explorer_urls
 
 ## Stake a Supplier & Deploy a RelayMiner
 
+Stake the supplier:
+
 ```bash
-# Stake the supplier
 sed -i -e s/YOUR_NODE_IP_OR_HOST/$NODE_HOSTNAME/g ./stake_configs/supplier_stake_config_example.yaml
+sed -i -e s/YOUR_OWNER_ADDRESS/$SUPPLIER_ADDR/g ./stake_configs/supplier_stake_config_example.yaml
 poktrolld tx supplier stake-supplier --config=/poktroll/stake_configs/supplier_stake_config_example.yaml --from=supplier --chain-id=poktroll --yes
+
 # OPTIONALLY check the supplier's status
 poktrolld query supplier show-supplier $SUPPLIER_ADDR
 
@@ -157,20 +166,30 @@ poktrolld query supplier show-supplier $SUPPLIER_ADDR
 sed -i -e s/YOUR_NODE_IP_OR_HOST/$NODE_HOSTNAME/g relayminer-example/config/relayminer_config.yaml
 sed -i -e "s|backend_url: \".*\"|backend_url: \"https://eth-mainnet.rpc.grove.city/v1/c7f14c60\"|g" relayminer-example/config/relayminer_config.yaml
 sed -i -e s/key-for-supplier1/supplier/g relayminer-example/config/relayminer_config.yaml
-docker-compose up -d relayminer-example
+```
+
+Start the supplier
+
+```bash
+docker compose up -d relayminer-example
 # OPTIONALLY view the logs
 docker logs -f --tail 100 relay_miner
 ```
 
 ## Stake an Application & Deploy an AppGate Server
 
+Stake the application:
+
 ```bash
-# Stake the application
 poktrolld tx application stake-application --config=/poktroll/stake_configs/application_stake_config_example.yaml --from=application --chain-id=poktroll --yes
+
 # OPTIONALLY check the application's status
 poktrolld query application show-application $APPLICATION_ADDR
+```
 
-# Start the appgate server
+Start the appgate server:
+
+```bash
 docker compose up -d appgate-server-example
 # OPTIONALLY view the logs
 docker logs -f --tail 100 appgate_server
@@ -198,4 +217,77 @@ for i in {1..10}; do
     --max-time 1
   echo ""
 done
+```
+
+## Managing a re-genesis
+
+Assuming you already had everything functioning following the steps above, this
+is a quick way to reset everything (without recreating keys) after a re-genesis.
+
+### Full Nodes
+
+```bash
+# Stop all containers
+docker-compose down
+docker rm $(docker ps -aq) -f
+
+# Remove existing data
+rm -rf poktrolld-data/config/addrbook.json poktrolld-data/config/genesis.json poktrolld-data/data/
+```
+
+Update `POKTROLLD_IMAGE_TAG` in `.env` based on the releases [here](https://github.com/pokt-network/poktroll/releases/tag/v0.0.6).
+
+```bash
+# Start the full
+docker compose up -d poktrolld poktrolld
+
+# Sanity check the logs
+docker logs full_node -f --tail 100
+```
+
+### Fund the same accounts
+
+Go to the [faucet](https://faucet.testnet.pokt.network/) and fund the same accounts:
+
+```bash
+echo $APPLICATION_ADDR
+echo $GATEWAY_ADDR
+echo $SUPPLIER_ADDR
+```
+
+#### Faucet is not ready and you need to fund the accounts manually
+
+```bash
+# Import the faucet using the mnemonic
+poktrolld keys add --recover -i faucet
+
+poktrolld tx bank send faucet $APPLICATION_ADDR 100000000000upokt --chain-id=poktroll --yes
+poktrolld tx bank send faucet $GATEWAY_ADDR 100000000000upokt --chain-id=poktroll --yes
+poktrolld tx bank send faucet $SUPPLIER_ADDR 100000000000upokt --chain-id=poktroll --yes
+```
+
+### Start the RelayMiner
+
+```bash
+# Stake
+poktrolld tx supplier stake-supplier --config=/poktroll/stake_configs/supplier_stake_config_example.yaml --from=supplier --chain-id=poktroll --yes
+# Check
+poktrolld query supplier show-supplier $SUPPLIER_ADDR
+# Start
+docker compose up -d relayminer-example
+# View
+docker logs -f --tail 100 relay_miner
+```
+
+### Start the AppGate Server
+
+```bash
+# Stake
+poktrolld tx application stake-application --config=/poktroll/stake_configs/application_stake_config_example.yaml --from=application --chain-id=poktroll --yes
+# Check
+poktrolld query application show-application $APPLICATION_ADDR
+# Start
+docker compose up -d appgate-server-example
+# View
+docker logs -f --tail 100 appgate_server
 ```
