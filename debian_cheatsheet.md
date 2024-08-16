@@ -78,13 +78,12 @@ cd poktroll-docker-compose-example
 ## Update your environment
 
 ```bash
-echo "source $(pwd)/helpers.sh" >> ~/.bashrc
-source ~/.bashrc
+cp .env.sample .env
 
 EXTERNAL_IP=$(curl -4 ifconfig.me/ip)
-
-cp .env.sample .env
 sed -i -e s/NODE_HOSTNAME=/NODE_HOSTNAME=$EXTERNAL_IP/g .env
+
+echo "source $(pwd)/helpers.sh" >> ~/.bashrc
 echo "source $(pwd)/.env" >> ~/.bashrc
 source ~/.bashrc
 ```
@@ -105,7 +104,7 @@ Supplier:
 ```bash
 poktrolld keys add supplier > /tmp/supplier
 
-mnemonic=$(tail -n 1 /tmp/supplier | tr -d '\r') sed -i "s|SUPPLIER_MNEMONIC=\".*\"|SUPPLIER_MNEMONIC=\"$mnemonic\"|" .env
+mnemonic=$(tail -n 1 /tmp/supplier | tr -d '\r'); sed -i "s|SUPPLIER_MNEMONIC=\".*\"|SUPPLIER_MNEMONIC=\"$mnemonic\"|" .env
 
 address=$(awk '/address:/{print $3; exit}' /tmp/supplier | tr -d '\r'); sed -i "s|SUPPLIER_ADDR=\".*\"|SUPPLIER_ADDR=\"$address\"|g" .env
 ```
@@ -115,7 +114,7 @@ Application:
 ```bash
 poktrolld keys add application > /tmp/application
 
-mnemonic=$(tail -n 1 /tmp/application | tr -d '\r') sed -i "s|APPLICATION_MNEMONIC=\".*\"|APPLICATION_MNEMONIC=\"$mnemonic\"|" .env
+mnemonic=$(tail -n 1 /tmp/application | tr -d '\r'); sed -i "s|APPLICATION_MNEMONIC=\".*\"|APPLICATION_MNEMONIC=\"$mnemonic\"|" .env
 
 address=$(awk '/address:/{print $3; exit}' /tmp/application | tr -d '\r'); sed -i "s|APPLICATION_ADDR=\".*\"|APPLICATION_ADDR=\"$address\"|g" .env
 ```
@@ -125,21 +124,19 @@ Gateway:
 ```bash
 poktrolld keys add gateway > /tmp/gateway
 
-mnemonic=$(tail -n 1 /tmp/gateway | tr -d '\r') sed -i "s|GATEWAY_MNEMONIC=\".*\"|GATEWAY_MNEMONIC=\"$mnemonic\"|" .env
+mnemonic=$(tail -n 1 /tmp/gateway | tr -d '\r'); sed -i "s|GATEWAY_MNEMONIC=\".*\"|GATEWAY_MNEMONIC=\"$mnemonic\"|" .env
 
 address=$(awk '/address:/{print $3; exit}' /tmp/gateway | tr -d '\r'); sed -i "s|GATEWAY_ADDR=\".*\"|GATEWAY_ADDR=\"$address\"|g" .env
 ```
 
-Finally, `source .env` to update the environment variables.
+FINALLY, `source .env` to update the environment variables.
 
 ## Fund your accounts
 
 Run the following:
 
 ```bash
-echo $APPLICATION_ADDR
-echo $GATEWAY_ADDR
-echo $SUPPLIER_ADDR
+show_actor_addresses
 ```
 
 For each one, fund the accounts using the [faucet](https://faucet.testnet.pokt.network/)
@@ -147,7 +144,7 @@ For each one, fund the accounts using the [faucet](https://faucet.testnet.pokt.n
 Next, run this helper (it's part of `helpers.sh`) to find each of them on the explorer:
 
 ```bash
-explorer_urls
+show_explorer_urls
 ```
 
 ## Stake a Supplier & Deploy a RelayMiner
@@ -165,13 +162,12 @@ poktrolld query supplier show-supplier $SUPPLIER_ADDR
 # Start the relay miner (please update the grove app ID if you can)
 sed -i -e s/YOUR_NODE_IP_OR_HOST/$NODE_HOSTNAME/g relayminer-example/config/relayminer_config.yaml
 sed -i -e "s|backend_url: \".*\"|backend_url: \"https://eth-mainnet.rpc.grove.city/v1/c7f14c60\"|g" relayminer-example/config/relayminer_config.yaml
-sed -i -e s/key-for-supplier1/supplier/g relayminer-example/config/relayminer_config.yaml
 ```
 
 Start the supplier
 
 ```bash
-docker compose up -d relayminer
+docker compose up -d relayminer-example
 # OPTIONALLY view the logs
 docker logs -f --tail 100 relay_miner
 ```
@@ -260,10 +256,7 @@ echo $SUPPLIER_ADDR
 ```bash
 # Import the faucet using the mnemonic
 poktrolld keys add --recover -i faucet
-
-poktrolld tx bank send faucet $APPLICATION_ADDR 100000000000upokt --chain-id=poktroll --yes
-poktrolld tx bank send faucet $GATEWAY_ADDR 100000000000upokt --chain-id=poktroll --yes
-poktrolld tx bank send faucet $SUPPLIER_ADDR 100000000000upokt --chain-id=poktroll --yes
+poktrolld tx bank multi-send faucet $APPLICATION_ADDR $GATEWAY_ADDR $SUPPLIER_ADDR 100000000000upokt --chain-id=poktroll --yes
 ```
 
 ### Start the RelayMiner
