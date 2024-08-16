@@ -171,7 +171,7 @@ sed -i -e s/key-for-supplier1/supplier/g relayminer-example/config/relayminer_co
 Start the supplier
 
 ```bash
-docker compose up -d relayminer-example
+docker compose up -d relayminer
 # OPTIONALLY view the logs
 docker logs -f --tail 100 relay_miner
 ```
