@@ -57,6 +57,15 @@ echo \
   $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 sudo apt-get update
+
+# Check if UFW is installed and add rules if it is
+if command -v ufw > /dev/null 2>&1; then
+    sudo ufw allow from 172.16.0.0/12
+    sudo ufw allow from 192.168.0.0/16
+    echo "UFW rules added for Docker networks"
+else
+    echo "UFW is not installed, skipping firewall configuration"
+fi
 ```
 
 And then install docker:
@@ -256,7 +265,7 @@ echo $SUPPLIER_ADDR
 ```bash
 # Import the faucet using the mnemonic
 poktrolld keys add --recover -i faucet
-poktrolld tx bank multi-send faucet $APPLICATION_ADDR $GATEWAY_ADDR $SUPPLIER_ADDR 100000000000upokt --chain-id=poktroll --yes
+poktrolld tx bank multi-send faucet $APPLICATION_ADDR $GATEWAY_ADDR $SUPPLIER_ADDR 100000upokt --chain-id=poktroll --yes
 ```
 
 ### Start the RelayMiner

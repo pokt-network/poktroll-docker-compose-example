@@ -10,6 +10,7 @@ celestia-da/lock
 relayminer-example/config/app.toml
 relayminer-example/config/client.toml
 relayminer-example/config/config.toml
+relayminer-example/smt/
 appgate-server-example/config/app.toml
 appgate-server-example/config/client.toml
 appgate-server-example/config/config.toml
