@@ -30,6 +30,7 @@ services:
     ports:
       - "26657:26657"
       - "26656:26656"
+      - "9090:9090" # gRPC runs on port 9090
     restart: unless-stopped
     depends_on:
       init-priv-validator-state:
@@ -71,6 +72,7 @@ services:
     volumes:
       - ./appgate-server-example:/home/pocket/.poktroll/
       - ./scripts/start-appgate-server.sh:/home/pocket/start-appgate-server.sh
+
   # Gateway
   gateway-example:
     image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG:-latest}
