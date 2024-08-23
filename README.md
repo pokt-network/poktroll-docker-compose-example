@@ -169,6 +169,15 @@ curl -s -X POST localhost:26657/status | jq
 curl -s -X POST localhost:26657/block | jq
 ```
 
+### gRPC
+
+To inspect the gRPC results on port 9090 you may [install grpcurl](https://github.com/fullstorydev/grpcurl?tab=readme-ov-file#installation).
+
+Once installed:
+```bash
+grpcurl -plaintext localhost:9090 list
+```
+
 ### Watch the height
 
 ```bash

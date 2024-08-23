@@ -30,6 +30,7 @@ services:
     ports:
       - "26657:26657"
       - "26656:26656"
+      - "9090:9090" # gRPC runs on port 9090
     restart: unless-stopped
     depends_on:
       init-priv-validator-state:
