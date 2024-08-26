@@ -121,6 +121,6 @@ services:
     volumes:
       - ./grafana/data:/var/lib/grafana
       - ./grafana/dashboards:/var/lib/grafana/dashboards
-      - ./grafana/dashboard.yaml:/etc/grafana/provisioning/dashboards/main.yaml
+      - ./grafana/dashboard.yml:/etc/grafana/provisioning/dashboards/main.yaml
       - ./grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
       - ./grafana/grafana.ini:/etc/grafana/grafana.ini
