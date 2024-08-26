@@ -17,3 +17,5 @@ appgate-server-example/config/config.toml
 .env
 */keyring-test/*
 .vscode
+prometheus/data
+grafana/data
