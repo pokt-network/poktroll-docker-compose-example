@@ -122,3 +122,4 @@ services:
       - ./grafana/data:/var/lib/grafana
       - ./grafana/dashboards:/var/lib/grafana/dashboards
       - ./grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
+      - ./grafana/grafana.ini:/etc/grafana/grafana.ini
