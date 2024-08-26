@@ -6,11 +6,17 @@ scrape_configs:
     scheme: http
     static_configs:
       - targets: ['relayminer-example:9090']
+        labels:
+          # For backwards-compatibility with LocalNet dashboard
+          container: relayminer
 
   - job_name: 'appgate-server'
     scheme: http
     static_configs:
       - targets: ['appgate-server-example:9090']
+        labels:
+          # For backwards-compatibility with LocalNet dashboard
+          container: appgate-server
 
   - job_name: 'gateway'
     scheme: http
