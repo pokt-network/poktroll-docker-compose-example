@@ -97,7 +97,7 @@ services:
     pull_policy: always
     user: "0"
     ports:
-      - "9090:9090"
+      - "9191:9090"
     restart: unless-stopped
     volumes:
       - ./prometheus/data:/prometheus
@@ -121,4 +121,6 @@ services:
     volumes:
       - ./grafana/data:/var/lib/grafana
       - ./grafana/dashboards:/var/lib/grafana/dashboards
+      - ./grafana/dashboard.yml:/etc/grafana/provisioning/dashboards/main.yaml
       - ./grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
+      - ./grafana/grafana.ini:/etc/grafana/grafana.ini
