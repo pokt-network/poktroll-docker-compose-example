@@ -1,3 +1,6 @@
+# TODO_IMPROVE: Add these helpers to a development CLI or a Makefile
+
+# TODO_IMPROVE: Enable downloading poktrolld through home brew
 function poktrolld() {
     docker exec -it full_node poktrolld "$@"
 }
@@ -24,4 +27,36 @@ function show_actor_addresses() {
 
 function query_supplier() {
     poktrolld query supplier show-supplier $SUPPLIER_ADDR
+}
+
+function clear_all_node_datada() {
+    read -p "Are you sure you want to remove all existing poktroll data? (y/N): " confirm
+    if [[ "$confirm" =~ ^[Yy]$ ]]; then
+        echo "Proceeding with the action..."
+        # Place the code for the action here
+    else
+        echo "Action cancelled."
+        exit 0
+    fi
+
+    rm -rf poktrolld-data/config/addrbook.json poktrolld-data/config/genesis.json poktrolld-data/data/
+}
+
+function path_prepare_config() {
+    echo """
+shannon_config:
+  full_node_config:
+    rpc_url: ${NODE_HOSTNAME}:26657
+    grpc_config:
+      host_port: ${NODE_HOSTNAME}:9090
+      insecure: true
+    gateway_address: \"${GATEWAY_ADDR}\"
+    gateway_private_key: \"Run: poktrolld keys export --unsafe --unarmored-hex  gateway\"
+    delegated_app_addresses:
+      - \"${APPLICATION_ADDR}\"
+
+services:
+  \"0021\":
+    alias: \"eth-mainnet\"
+"""
 }
