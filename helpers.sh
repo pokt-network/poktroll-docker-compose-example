@@ -29,7 +29,7 @@ function query_supplier() {
     poktrolld query supplier show-supplier $SUPPLIER_ADDR
 }
 
-function clear_all_node_datada() {
+function clear_all_node_data() {
     read -p "Are you sure you want to remove all existing poktroll data? (y/N): " confirm
     if [[ "$confirm" =~ ^[Yy]$ ]]; then
         echo "Proceeding with the action..."
