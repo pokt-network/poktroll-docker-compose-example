@@ -5,26 +5,26 @@ scrape_configs:
   - job_name: 'relay-miner'
     scheme: http
     static_configs:
-      - targets: ['relayminer-example:9090']
+      - targets: ['relayminer:9090']
         labels:
           # For backwards-compatibility with LocalNet dashboard
           container: relayminer
 
-  - job_name: 'appgate-server'
+  - job_name: 'appgate'
     scheme: http
     static_configs:
-      - targets: ['appgate-server-example:9090']
+      - targets: ['appgate:9090']
         labels:
           # For backwards-compatibility with LocalNet dashboard
-          container: appgate-server
+          container: appgate
 
   - job_name: 'gateway'
     scheme: http
     static_configs:
-      - targets: ['gateway-example:9090']
+      - targets: ['gateway:9090']
         labels:
           # For backwards-compatibility with LocalNet dashboard
-          container: appgate-server
+          container: appgate
 
   - job_name: 'poktrolld'
     scheme: http

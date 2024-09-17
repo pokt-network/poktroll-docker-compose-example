@@ -1,5 +1,6 @@
+version: '3.8'
 services:
-  init-priv-validator-state:
+  prepare-full-node:
     image: busybox
     restart: "no"
     command: ["sh", "/home/pocket/.poktroll/scripts/init-poktrolld.sh"]
@@ -10,40 +11,37 @@ services:
       - ./scripts/:/home/pocket/.poktroll/scripts
 
       # Necessary to change ownership of the files, as our production image does not run the process under root.
-      - ./relayminer-example:/home/pocket/.poktroll/relayminer-example
-      - ./appgate-server-example:/home/pocket/.poktroll/appgate-server-example
-      - ./gateway-example:/home/pocket/.poktroll/gateway-example
+      - ./relayminer:/home/pocket/.poktroll/relayminer
+      - ./appgate:/home/pocket/.poktroll/appgate
+      - ./gateway:/home/pocket/.poktroll/gateway
 
   # Full node
-  poktrolld:
-    container_name: full_node
+  full-node:
+    container_name: full-node
     image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG:-latest}
-    pull_policy: always
-    entrypoint:
-      [
-        "poktrolld",
-        "start",
-        "--p2p.external-address=${NODE_HOSTNAME}:26656",
-        "--log_level=${POKTROLLD_LOG_LEVEL}",
-        "--p2p.seeds=${SEEDS}",
-      ]
+    # pull_policy: always
+    entrypoint: ["sh", "/home/pocket/start-poktrolld.sh"]
+    environment:
+      - NODE_HOSTNAME=${NODE_HOSTNAME}
+      - POKTROLLD_LOG_LEVEL=${POKTROLLD_LOG_LEVEL}
     ports:
       - "26657:26657"
       - "26656:26656"
-      - "9090:9090" # gRPC runs on port 9090
+      - "9090:9090"
     restart: unless-stopped
     depends_on:
-      init-priv-validator-state:
+      prepare-full-node:
         condition: service_completed_successfully
     volumes:
       - ./poktrolld-data:/home/pocket/.poktroll/
+      - ./scripts/start-poktrolld.sh:/home/pocket/start-poktrolld.sh
       - ./stake_configs:/poktroll/stake_configs
 
   # Relay Miner
-  relayminer-example:
+  relayminer:
     image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG:-latest}
-    container_name: relay_miner
-    pull_policy: always
+    container_name: relayminer
+    # pull_policy: always
     entrypoint: ["sh", "/home/pocket/start-relayminer.sh"]
     environment:
       - SUPPLIER_MNEMONIC=${SUPPLIER_MNEMONIC}
@@ -51,33 +49,33 @@ services:
       - "8545:8545" # 8545 is the port RelayMiner is configured to listen on in `relayminer_config.yaml`.
     restart: unless-stopped
     depends_on:
-      - poktrolld
+      - full-node
     volumes:
-      - ./relayminer-example:/home/pocket/.poktroll/
+      - ./relayminer:/home/pocket/.poktroll/
       - ./scripts/start-relayminer.sh:/home/pocket/start-relayminer.sh
 
   # AppGate Server
-  appgate-server-example:
+  appgate:
     image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG:-latest}
-    container_name: appgate_server
-    pull_policy: always
-    entrypoint: ["sh", "/home/pocket/start-appgate-server.sh"]
+    container_name: appgate
+    # pull_policy: always
+    entrypoint: ["sh", "/home/pocket/start-appgate.sh"]
     environment:
       - APPLICATION_MNEMONIC=${APPLICATION_MNEMONIC}
     ports:
       - "85:85" # 85 is the port AppGate Server is configured to listen on in `appgate_server_config.yaml`.
     restart: unless-stopped
     depends_on:
-      - poktrolld
+      - full-node
     volumes:
-      - ./appgate-server-example:/home/pocket/.poktroll/
-      - ./scripts/start-appgate-server.sh:/home/pocket/start-appgate-server.sh
+      - ./appgate:/home/pocket/.poktroll/
+      - ./scripts/start-appgate.sh:/home/pocket/start-appgate.sh
 
   # Gateway
-  gateway-example:
+  gateway:
     image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG:-latest}
     container_name: gateway
-    pull_policy: always
+    # pull_policy: always
     entrypoint: ["sh", "/home/pocket/start-gateway.sh"]
     environment:
       - GATEWAY_MNEMONIC=${GATEWAY_MNEMONIC}
@@ -85,17 +83,17 @@ services:
       - "84:84" # 84 is the port AppGate Server is configured as a gateway to listen on in `gateway_config.yaml`.
     restart: unless-stopped
     depends_on:
-      - poktrolld
+      - full-node
     volumes:
-      - ./gateway-example:/home/pocket/.poktroll/
+      - ./gateway:/home/pocket/.poktroll/
       - ./scripts/start-gateway.sh:/home/pocket/start-gateway.sh
 
   # Prometheus
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus
-    pull_policy: always
-    user: "0"
+    # pull_policy: always
+    # user: "0"
     ports:
       - "9191:9090"
     restart: unless-stopped
@@ -110,9 +108,9 @@ services:
   grafana:
     image: grafana/grafana-oss:latest
     container_name: grafana
-    pull_policy: always
-    entrypoint: ["sh", "-c", "/run.sh"]
-    user: "0"
+    # pull_policy: always
+    # entrypoint: ["sh", "-c", "/run.sh"]
+    # user: "0"
     depends_on:
       - prometheus
     ports:

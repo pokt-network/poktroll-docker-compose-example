@@ -2,11 +2,11 @@
 
 # TODO_IMPROVE: Enable downloading poktrolld through home brew
 function poktrolld() {
-    docker exec -it full_node poktrolld "$@"
+    docker exec -it full-node poktrolld "$@"
 }
 
 function full_node_cli() {
-    docker exec -it full_node bash
+    docker exec -it full-node bash
 }
 
 function watch_height() {
@@ -39,7 +39,7 @@ function clear_all_node_data() {
         exit 0
     fi
 
-    rm -rf poktrolld-data/config/addrbook.json poktrolld-data/config/genesis.json poktrolld-data/data/
+    rm -rf poktrolld-data/config/addrbook.json poktrolld-data/config/genesis.json poktrolld-data/config/genesis.seeds poktrolld-data/data/ poktrolld-data/config/node_key.json poktrolld-data/config/priv_validator_key.json
 }
 
 function path_prepare_config() {
