@@ -588,7 +588,7 @@
                                 "0": {
                                     "color": "green",
                                     "index": 0,
-                                    "text": "Not Syncing"
+                                    "text": "Up to date"
                                 },
                                 "1": {
                                     "color": "red",
