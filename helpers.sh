@@ -6,7 +6,7 @@ function poktrolld() {
 }
 
 function full_node_cli() {
-    docker exec -it full-node bash
+    docker exec -it full-node sh
 }
 
 function watch_height() {
@@ -33,13 +33,11 @@ function clear_all_node_data() {
     read -p "Are you sure you want to remove all existing poktroll data? (y/N): " confirm
     if [[ "$confirm" =~ ^[Yy]$ ]]; then
         echo "Proceeding with the action..."
-        # Place the code for the action here
+        rm -rf poktrolld-data/config/addrbook.json poktrolld-data/config/genesis.json poktrolld-data/config/genesis.seeds poktrolld-data/data/ poktrolld-data/config/node_key.json poktrolld-data/config/priv_validator_key.json
     else
         echo "Action cancelled."
         exit 0
     fi
-
-    rm -rf poktrolld-data/config/addrbook.json poktrolld-data/config/genesis.json poktrolld-data/config/genesis.seeds poktrolld-data/data/ poktrolld-data/config/node_key.json poktrolld-data/config/priv_validator_key.json
 }
 
 function path_prepare_config() {

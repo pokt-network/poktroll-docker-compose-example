@@ -1,9 +1,9 @@
 # Please refer to https://dev.poktroll.com/operate/configs/appgate_server_config for documentation.
 # Pocket node URL that exposes CometBFT JSON-RPC API.
 # This can be used by the Cosmos client SDK, event subscriptions, etc...
-query_node_rpc_url: tcp://poktrolld:26657
+query_node_rpc_url: tcp://full-node:26657
 # Pocket node URL that exposes the Cosmos gRPC service, dedicated to querying purposes.
-query_node_grpc_url: tcp://poktrolld:9090
+query_node_grpc_url: tcp://full-node:9090
 # The name of the key (in the keyring) that will be used to sign relays
 signing_key: key-for-application
 # Whether the server should sign all incoming requests with its own ring (for applications)

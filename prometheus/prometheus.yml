@@ -1,5 +1,5 @@
 global:
-  scrape_interval: 15s
+  scrape_interval: 10s
 
 scrape_configs:
   - job_name: 'relay-miner'
@@ -26,10 +26,10 @@ scrape_configs:
           # For backwards-compatibility with LocalNet dashboard
           container: appgate
 
-  - job_name: 'poktrolld'
+  - job_name: 'full-node'
     scheme: http
     metrics_path: /metrics
     params:
       format: ['prometheus']
     static_configs:
-      - targets: ['poktrolld:1317']
+      - targets: ['full-node:1317']

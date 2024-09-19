@@ -115,7 +115,7 @@
                 {
                     "datasource": {
                         "type": "prometheus",
-                        "uid": "prometheus"
+                        "uid": "Prometheus"
                     },
                     "disableTextWrap": false,
                     "editorMode": "code",
@@ -214,7 +214,7 @@
                 {
                     "datasource": {
                         "type": "prometheus",
-                        "uid": "prometheus"
+                        "uid": "Prometheus"
                     },
                     "disableTextWrap": false,
                     "editorMode": "code",
@@ -326,7 +326,7 @@
                 {
                     "datasource": {
                         "type": "prometheus",
-                        "uid": "prometheus"
+                        "uid": "Prometheus"
                     },
                     "disableTextWrap": false,
                     "editorMode": "code",
@@ -359,7 +359,7 @@
                 },
                 "datasource": {
                     "type": "prometheus",
-                    "uid": "prometheus"
+                    "uid": "Prometheus"
                 },
                 "definition": "label_values(go_info{container=\"appgate-server\"},job)",
                 "hide": 0,

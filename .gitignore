@@ -13,6 +13,9 @@ relayminer/smt/
 appgate/config/app.toml
 appgate/config/client.toml
 appgate/config/config.toml
+gateway/config/app.toml
+gateway/config/client.toml
+gateway/config/config.toml
 .env
 */keyring-test/*
 .vscode
