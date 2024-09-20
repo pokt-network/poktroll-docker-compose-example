@@ -7,7 +7,6 @@ fi
 
 # 1025 is the `pocket` user on production images. `1025` is the UID/GID adopted as standard on heighliner.
 chmod -R 755 /home/pocket/.poktroll/data/
-chown -R 1025:1025 /home/pocket/.poktroll/
 
 if [ -n "$NETWORK_NAME" ]; then
   if [ ! -f /home/pocket/.poktroll/config/genesis.json ]; then
@@ -17,7 +16,17 @@ if [ -n "$NETWORK_NAME" ]; then
       exit 1
     fi
   fi
+
+  if [ ! -f /home/pocket/.poktroll/config/genesis.seeds ]; then
+    wget -O /home/pocket/.poktroll/config/genesis.seeds https://raw.githubusercontent.com/pokt-network/pocket-network-genesis/master/poktrolld/$NETWORK_NAME.seeds
+    if [ $? -ne 0 ]; then
+      echo "Failed to download seeds file for $NETWORK_NAME."
+      exit 1
+    fi
+  fi
 else
   echo "NETWORK_NAME variable not set. Please set it to either 'testnet' or 'mainnet'."
   exit 1
 fi
+
+chown -R 1025:1025 /home/pocket/.poktroll/

@@ -3,9 +3,9 @@ default_signing_key_names:
   - key-for-supplier1
 smt_store_path: /home/pocket/.poktroll/smt
 pocket_node:
-  query_node_rpc_url: tcp://poktrolld:26657
-  query_node_grpc_url: tcp://poktrolld:9090
-  tx_node_rpc_url: tcp://poktrolld:26657
+  query_node_rpc_url: tcp://full-node:26657
+  query_node_grpc_url: tcp://full-node:9090
+  tx_node_rpc_url: tcp://full-node:26657
 suppliers:
   - service_id: "0021" # 0021 is an Ethereum mainnet service ID. Other legacy IDs: https://docs.pokt.network/reference/supported-chains
     service_config:

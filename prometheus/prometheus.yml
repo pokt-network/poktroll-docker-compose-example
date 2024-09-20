@@ -1,35 +1,35 @@
 global:
-  scrape_interval: 15s
+  scrape_interval: 10s
 
 scrape_configs:
   - job_name: 'relay-miner'
     scheme: http
     static_configs:
-      - targets: ['relayminer-example:9090']
+      - targets: ['relayminer:9090']
         labels:
           # For backwards-compatibility with LocalNet dashboard
           container: relayminer
 
-  - job_name: 'appgate-server'
+  - job_name: 'appgate'
     scheme: http
     static_configs:
-      - targets: ['appgate-server-example:9090']
+      - targets: ['appgate:9090']
         labels:
           # For backwards-compatibility with LocalNet dashboard
-          container: appgate-server
+          container: appgate
 
   - job_name: 'gateway'
     scheme: http
     static_configs:
-      - targets: ['gateway-example:9090']
+      - targets: ['gateway:9090']
         labels:
           # For backwards-compatibility with LocalNet dashboard
-          container: appgate-server
+          container: appgate
 
-  - job_name: 'poktrolld'
+  - job_name: 'full-node'
     scheme: http
     metrics_path: /metrics
     params:
       format: ['prometheus']
     static_configs:
-      - targets: ['poktrolld:1317']
+      - targets: ['full-node:1317']
