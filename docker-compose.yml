@@ -49,6 +49,7 @@ services:
     depends_on:
       - full-node
     volumes:
+      - /etc/ssl/:/etc/ssl/
       - ./relayminer:/home/pocket/.poktroll/
       - ./scripts/start-relayminer.sh:/home/pocket/start-relayminer.sh
 
@@ -65,6 +66,7 @@ services:
     depends_on:
       - full-node
     volumes:
+      - /etc/ssl/:/etc/ssl/
       - ./appgate:/home/pocket/.poktroll/
       - ./scripts/start-appgate.sh:/home/pocket/start-appgate.sh
 
