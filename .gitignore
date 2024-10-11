@@ -1,4 +1,5 @@
 poktrolld-data/data
+poktrolld-data/data-backup*
 poktrolld-data/config/genesis.json
 poktrolld-data/config/genesis.seeds
 poktrolld-data/config/node_key.json
@@ -21,3 +22,4 @@ gateway/config/config.toml
 .vscode
 prometheus/data
 grafana/data
+.DS_Store

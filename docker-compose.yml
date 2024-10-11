@@ -18,7 +18,7 @@ services:
   # Full node
   full-node:
     container_name: full-node
-    image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG:-latest}
+    image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG_VALIDATOR:-latest}
     entrypoint: ["sh", "/home/pocket/start-poktrolld.sh"]
     environment:
       - NODE_HOSTNAME=${NODE_HOSTNAME}
@@ -32,13 +32,14 @@ services:
       prepare-full-node:
         condition: service_completed_successfully
     volumes:
+      - /etc/ssl/:/etc/ssl/
       - ./poktrolld-data:/home/pocket/.poktroll/
       - ./scripts/start-poktrolld.sh:/home/pocket/start-poktrolld.sh
       - ./stake_configs:/poktroll/stake_configs
 
   # Relay Miner
   relayminer:
-    image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG:-latest}
+    image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG_OFF_CHAIN:-latest}
     container_name: relayminer
     entrypoint: ["sh", "/home/pocket/start-relayminer.sh"]
     environment:
@@ -55,7 +56,7 @@ services:
 
   # AppGate Server
   appgate:
-    image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG:-latest}
+    image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG_OFF_CHAIN:-latest}
     container_name: appgate
     entrypoint: ["sh", "/home/pocket/start-appgate.sh"]
     environment:
@@ -72,7 +73,7 @@ services:
 
   # Gateway
   gateway:
-    image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG:-latest}
+    image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG_OFF_CHAIN:-latest}
     container_name: gateway
     entrypoint: ["sh", "/home/pocket/start-gateway.sh"]
     environment:
