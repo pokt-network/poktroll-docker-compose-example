@@ -21,3 +21,4 @@ gateway/config/config.toml
 .vscode
 prometheus/data
 grafana/data
+.DS_Store
