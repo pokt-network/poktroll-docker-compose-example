@@ -1,4 +1,5 @@
 poktrolld-data/data
+poktrolld-data/data-backup*
 poktrolld-data/config/genesis.json
 poktrolld-data/config/genesis.seeds
 poktrolld-data/config/node_key.json

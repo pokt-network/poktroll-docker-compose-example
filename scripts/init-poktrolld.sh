@@ -24,6 +24,9 @@ if [ -n "$NETWORK_NAME" ]; then
       exit 1
     fi
   fi
+
+  # TODO_CONSIDER: we can pull the binary using https://github.com/pokt-network/pocket-network-genesis/blob/master/poktrolld/testnet-validated.init-version
+  # here. For now - let's rely on the correct initial version set in .env.
 else
   echo "NETWORK_NAME variable not set. Please set it to either 'testnet' or 'mainnet'."
   exit 1

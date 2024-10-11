@@ -9,7 +9,7 @@ export DAEMON_NAME="poktrolld"
 export DAEMON_HOME="$HOME/.poktroll"
 export DAEMON_RESTART_AFTER_UPGRADE=true
 export DAEMON_ALLOW_DOWNLOAD_BINARIES=true
-export UNSAFE_SKIP_BACKUP=true
+export UNSAFE_SKIP_BACKUP=false
 
 # Ensure required environment variables are set
 : "${NODE_HOSTNAME:?Need to set NODE_HOSTNAME}"
