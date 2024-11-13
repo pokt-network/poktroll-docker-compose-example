@@ -10,7 +10,7 @@ chmod -R 755 /home/pocket/.poktroll/data/
 
 if [ -n "$NETWORK_NAME" ]; then
   if [ ! -f /home/pocket/.poktroll/config/genesis.json ]; then
-    wget -O /home/pocket/.poktroll/config/genesis.json https://raw.githubusercontent.com/pokt-network/pocket-network-genesis/master/poktrolld/$NETWORK_NAME.json
+    wget -O /home/pocket/.poktroll/config/genesis.json https://raw.githubusercontent.com/pokt-network/pocket-network-genesis/master/shannon/alpha/$NETWORK_NAME.json
     if [ $? -ne 0 ]; then
       echo "Failed to download Genesis JSON file for $NETWORK_NAME."
       exit 1
@@ -18,14 +18,14 @@ if [ -n "$NETWORK_NAME" ]; then
   fi
 
   if [ ! -f /home/pocket/.poktroll/config/genesis.seeds ]; then
-    wget -O /home/pocket/.poktroll/config/genesis.seeds https://raw.githubusercontent.com/pokt-network/pocket-network-genesis/master/poktrolld/$NETWORK_NAME.seeds
+    wget -O /home/pocket/.poktroll/config/genesis.seeds https://raw.githubusercontent.com/pokt-network/pocket-network-genesis/master/shannon/alpha/$NETWORK_NAME.seeds
     if [ $? -ne 0 ]; then
       echo "Failed to download seeds file for $NETWORK_NAME."
       exit 1
     fi
   fi
 
-  # TODO_CONSIDER: we can pull the binary using https://github.com/pokt-network/pocket-network-genesis/blob/master/poktrolld/testnet-validated.init-version
+  # TODO_CONSIDER: we can pull the binary using https://github.com/pokt-network/pocket-network-genesis/blob/master/shannon/alpha/testnet-validated.init-version
   # here. For now - let's rely on the correct initial version set in .env.
 else
   echo "NETWORK_NAME variable not set. Please set it to either 'testnet' or 'mainnet'."
