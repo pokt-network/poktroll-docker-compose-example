@@ -1,5 +1,5 @@
 # Please check documentation: https://dev.poktroll.com/operate/configs/supplier_staking_config
-stake_amount: 1000upokt
+stake_amount: 1000000upokt
 owner_address: YOUR_OWNER_ADDRESS
 services:
   - service_id: 0021
