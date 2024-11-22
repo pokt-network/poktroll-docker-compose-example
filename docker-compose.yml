@@ -18,7 +18,7 @@ services:
   # Full node
   full-node:
     container_name: full-node
-    image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG_VALIDATOR:-latest}
+    image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG_BASE:-0.0.10}
     entrypoint: ["sh", "/home/pocket/start-poktrolld.sh"]
     environment:
       - NODE_HOSTNAME=${NODE_HOSTNAME}
