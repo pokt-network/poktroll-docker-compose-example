@@ -21,54 +21,19 @@ fi
 if [ -n "$NETWORK_NAME" ]; then
     # Construct base URL using the branch and network
     BASE_URL="https://raw.githubusercontent.com/pokt-network/pocket-network-genesis/${GENESIS_BRANCH}/shannon/${NETWORK_NAME}"
-    GENESIS_URL="${BASE_URL}/genesis.json"
-    
-    echo "Attempting to download genesis from: $GENESIS_URL"
     
     # Download genesis.json if it doesn't exist
     if [ ! -f /home/pocket/.poktroll/config/genesis.json ]; then
-        # Add verbose output and retry logic
-        wget --verbose --tries=3 --timeout=15 -O /home/pocket/.poktroll/config/genesis.json "${GENESIS_URL}"
-        WGET_EXIT_CODE=$?
-        
-        # Check if wget was successful and file has content
-        if [ $WGET_EXIT_CODE -ne 0 ] || [ ! -s /home/pocket/.poktroll/config/genesis.json ]; then
-            echo "Failed to download Genesis JSON file from ${GENESIS_URL}"
-            echo "wget exit code: $WGET_EXIT_CODE"
-            echo "Attempting download with curl as fallback..."
-            
-            # Try curl as a fallback
-            curl -fsSL "${GENESIS_URL}" -o /home/pocket/.poktroll/config/genesis.json
-            CURL_EXIT_CODE=$?
-            
-            if [ $CURL_EXIT_CODE -ne 0 ] || [ ! -s /home/pocket/.poktroll/config/genesis.json ]; then
-                echo "Both wget and curl failed to download genesis.json"
-                echo "curl exit code: $CURL_EXIT_CODE"
-                echo "File contents (if any):"
-                cat /home/pocket/.poktroll/config/genesis.json || echo "No file content"
-                exit 1
-            fi
+        wget -O /home/pocket/.poktroll/config/genesis.json "${BASE_URL}/genesis.json"
+        if [ $? -ne 0 ]; then
+            echo "Failed to download Genesis JSON file for $NETWORK_NAME."
+            exit 1
         fi
         echo "Successfully downloaded genesis.json"
     fi
 
-    # Verify the file exists and has content
-    if [ ! -s /home/pocket/.poktroll/config/genesis.json ]; then
-        echo "Genesis file is empty or does not exist!"
-        exit 1
-    fi
-
-    # Debug: Print genesis.json contents and file info
-    echo "Genesis file details:"
-    ls -l /home/pocket/.poktroll/config/genesis.json
-    echo "Genesis.json contents:"
-    cat /home/pocket/.poktroll/config/genesis.json
-
     # Extract version from genesis.json and download correct binary
     APP_VERSION=$(jq -r '.app_version' /home/pocket/.poktroll/config/genesis.json)
-    echo "Raw jq output: $(jq '.' /home/pocket/.poktroll/config/genesis.json)"
-    echo "Attempted to extract app_version, got: '$APP_VERSION'"
-    
     if [ -z "$APP_VERSION" ]; then
         echo "Failed to extract app_version from genesis.json"
         exit 1
