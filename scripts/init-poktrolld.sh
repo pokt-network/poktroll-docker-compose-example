@@ -24,7 +24,7 @@ if [ -n "$NETWORK_NAME" ]; then
     
     # Download genesis.json if it doesn't exist
     if [ ! -f /home/pocket/.poktroll/config/genesis.json ]; then
-        wget -O /home/pocket/.poktroll/config/genesis.json "${BASE_URL}/genesis.json"
+        wget -q -O /home/pocket/.poktroll/config/genesis.json "${BASE_URL}/genesis.json"
         if [ $? -ne 0 ]; then
             echo "Failed to download Genesis JSON file for $NETWORK_NAME."
             exit 1
