@@ -24,6 +24,7 @@ if [ -n "$NETWORK_NAME" ]; then
     
     # Download genesis.json if it doesn't exist
     if [ ! -f /home/pocket/.poktroll/config/genesis.json ]; then
+        echo "Downloading genesis.json from: ${BASE_URL}/genesis.json"
         wget -O /home/pocket/.poktroll/config/genesis.json "${BASE_URL}/genesis.json"
         if [ $? -ne 0 ]; then
             echo "Failed to download Genesis JSON file for $NETWORK_NAME."
@@ -32,8 +33,15 @@ if [ -n "$NETWORK_NAME" ]; then
         echo "Successfully downloaded genesis.json"
     fi
 
+    # Debug: Print genesis.json contents
+    echo "Genesis.json contents:"
+    cat /home/pocket/.poktroll/config/genesis.json
+
     # Extract version from genesis.json and download correct binary
     APP_VERSION=$(jq -r '.app_version' /home/pocket/.poktroll/config/genesis.json)
+    echo "Raw jq output: $(jq '.' /home/pocket/.poktroll/config/genesis.json)"
+    echo "Attempted to extract app_version, got: '$APP_VERSION'"
+    
     if [ -z "$APP_VERSION" ]; then
         echo "Failed to extract app_version from genesis.json"
         exit 1
