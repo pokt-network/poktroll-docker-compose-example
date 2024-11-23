@@ -21,19 +21,36 @@ fi
 if [ -n "$NETWORK_NAME" ]; then
     # Construct base URL using the branch and network
     BASE_URL="https://raw.githubusercontent.com/pokt-network/pocket-network-genesis/${GENESIS_BRANCH}/shannon/${NETWORK_NAME}"
+    GENESIS_URL="${BASE_URL}/genesis.json"
+    
+    echo "Attempting to download genesis from: $GENESIS_URL"
     
     # Download genesis.json if it doesn't exist
     if [ ! -f /home/pocket/.poktroll/config/genesis.json ]; then
-        echo "Downloading genesis.json from: ${BASE_URL}/genesis.json"
-        wget -O /home/pocket/.poktroll/config/genesis.json "${BASE_URL}/genesis.json"
-        if [ $? -ne 0 ]; then
-            echo "Failed to download Genesis JSON file for $NETWORK_NAME."
+        wget -O /home/pocket/.poktroll/config/genesis.json "${GENESIS_URL}"
+        WGET_EXIT_CODE=$?
+        
+        # Check if wget was successful
+        if [ $WGET_EXIT_CODE -ne 0 ]; then
+            echo "Failed to download Genesis JSON file from ${GENESIS_URL}"
+            echo "wget exit code: $WGET_EXIT_CODE"
+            # Try to curl the URL to see if it exists
+            echo "Checking if URL exists:"
+            curl -I "${GENESIS_URL}"
             exit 1
         fi
         echo "Successfully downloaded genesis.json"
     fi
 
-    # Debug: Print genesis.json contents
+    # Verify the file exists and has content
+    if [ ! -s /home/pocket/.poktroll/config/genesis.json ]; then
+        echo "Genesis file is empty or does not exist!"
+        exit 1
+    fi
+
+    # Debug: Print genesis.json contents and file info
+    echo "Genesis file details:"
+    ls -l /home/pocket/.poktroll/config/genesis.json
     echo "Genesis.json contents:"
     cat /home/pocket/.poktroll/config/genesis.json
 
