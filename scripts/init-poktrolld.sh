@@ -27,17 +27,27 @@ if [ -n "$NETWORK_NAME" ]; then
     
     # Download genesis.json if it doesn't exist
     if [ ! -f /home/pocket/.poktroll/config/genesis.json ]; then
-        wget -O /home/pocket/.poktroll/config/genesis.json "${GENESIS_URL}"
+        # Add verbose output and retry logic
+        wget --verbose --tries=3 --timeout=15 -O /home/pocket/.poktroll/config/genesis.json "${GENESIS_URL}"
         WGET_EXIT_CODE=$?
         
-        # Check if wget was successful
-        if [ $WGET_EXIT_CODE -ne 0 ]; then
+        # Check if wget was successful and file has content
+        if [ $WGET_EXIT_CODE -ne 0 ] || [ ! -s /home/pocket/.poktroll/config/genesis.json ]; then
             echo "Failed to download Genesis JSON file from ${GENESIS_URL}"
             echo "wget exit code: $WGET_EXIT_CODE"
-            # Try to curl the URL to see if it exists
-            echo "Checking if URL exists:"
-            curl -I "${GENESIS_URL}"
-            exit 1
+            echo "Attempting download with curl as fallback..."
+            
+            # Try curl as a fallback
+            curl -fsSL "${GENESIS_URL}" -o /home/pocket/.poktroll/config/genesis.json
+            CURL_EXIT_CODE=$?
+            
+            if [ $CURL_EXIT_CODE -ne 0 ] || [ ! -s /home/pocket/.poktroll/config/genesis.json ]; then
+                echo "Both wget and curl failed to download genesis.json"
+                echo "curl exit code: $CURL_EXIT_CODE"
+                echo "File contents (if any):"
+                cat /home/pocket/.poktroll/config/genesis.json || echo "No file content"
+                exit 1
+            fi
         fi
         echo "Successfully downloaded genesis.json"
     fi
