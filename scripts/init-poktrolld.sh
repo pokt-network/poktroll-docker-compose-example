@@ -7,7 +7,7 @@ apt-get update
 apt-get install -y wget jq
 
 # Can change the branch from `pocket-network-genesis` repo to test before merging to master
-GENESIS_BRANCH="add-beta-seeds-rename-dirs"
+POCKET_NETWORK_GENESIS_BRANCH="master"
 
 # Create directories with correct permissions
 mkdir -p /home/pocket/.poktroll/data/
@@ -20,7 +20,7 @@ fi
 
 if [ -n "$NETWORK_NAME" ]; then
     # Construct base URL using the branch and network
-    BASE_URL="https://raw.githubusercontent.com/pokt-network/pocket-network-genesis/${GENESIS_BRANCH}/shannon/${NETWORK_NAME}"
+    BASE_URL="https://raw.githubusercontent.com/pokt-network/pocket-network-genesis/${POCKET_NETWORK_GENESIS_BRANCH}/shannon/${NETWORK_NAME}"
     
     # Download genesis.json if it doesn't exist
     if [ ! -f /home/pocket/.poktroll/config/genesis.json ]; then
