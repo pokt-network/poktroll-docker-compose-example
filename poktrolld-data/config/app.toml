@@ -7,7 +7,7 @@ index-events = []
 inter-block-cache = true
 min-retain-blocks = 0
 minimum-gas-prices = "0upokt"
-pruning = "default"
+pruning = "nothing"
 pruning-interval = "0"
 pruning-keep-recent = "0"
 query-gas-limit = "0"
@@ -32,7 +32,12 @@ query-gas-limit = "0"
   enable = true
 
 [mempool]
-  max-txs = 5000
+  max-txs = 10000
+
+[poktroll]
+
+  [poktroll.telemetry]
+    cardinality-level = "high"
 
 [rpc]
   cors_allowed_origins = ["*"]
@@ -49,10 +54,13 @@ query-gas-limit = "0"
     stop-node-on-err = true
 
 [telemetry]
+  datadog-hostname = ""
   enable-hostname = false
   enable-hostname-label = false
   enable-service-label = false
   enabled = true
   global-labels = []
-  prometheus-retention-time = 60
+  metrics-sink = "mem"
+  prometheus-retention-time = 86400
   service-name = ""
+  statsd-addr = ""

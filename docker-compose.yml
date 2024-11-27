@@ -1,9 +1,9 @@
 version: '3.8'
 services:
   prepare-full-node:
-    image: busybox
+    image: debian:bullseye-slim
     restart: "no"
-    command: ["sh", "/home/pocket/.poktroll/scripts/init-poktrolld.sh"]
+    command: ["bash", "/home/pocket/.poktroll/scripts/init-poktrolld.sh"]
     environment:
       - NETWORK_NAME=${NETWORK_NAME}
     volumes:
@@ -18,11 +18,16 @@ services:
   # Full node
   full-node:
     container_name: full-node
-    image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG_VALIDATOR:-latest}
+    image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG_BASE:-0.0.10}
     entrypoint: ["sh", "/home/pocket/start-poktrolld.sh"]
     environment:
       - NODE_HOSTNAME=${NODE_HOSTNAME}
       - POKTROLLD_LOG_LEVEL=${POKTROLLD_LOG_LEVEL}
+      - DAEMON_NAME=poktrolld
+      - DAEMON_HOME=/home/pocket/.poktroll
+      - DAEMON_RESTART_AFTER_UPGRADE=true
+      - DAEMON_ALLOW_DOWNLOAD_BINARIES=true
+      - UNSAFE_SKIP_BACKUP=false
     ports:
       - "26657:26657"
       - "26656:26656"
