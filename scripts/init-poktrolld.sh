@@ -68,6 +68,24 @@ if [ -n "$NETWORK_NAME" ]; then
             exit 1
         fi
     fi
+
+    # Add testnet-alpha specific mitigation after the binary setup
+    if [ "$NETWORK_NAME" = "testnet-alpha" ]; then
+        # Check for upgrade info file
+        UPGRADE_INFO_FILE="/home/pocket/.poktroll/data/upgrade-info.json"
+        if [ -f "$UPGRADE_INFO_FILE" ]; then
+            UPGRADE_HEIGHT=$(jq -r '.height' "$UPGRADE_INFO_FILE")
+            if [ "$UPGRADE_HEIGHT" = "83725" ]; then
+                echo "Applying testnet-alpha mitigation..."
+                # Remove upgrade info file
+                rm "$UPGRADE_INFO_FILE"
+                # Change symlink back to v0.0.10
+                rm -f /home/pocket/.poktroll/cosmovisor/current
+                ln -s /home/pocket/.poktroll/cosmovisor/upgrades/v0.0.10 /home/pocket/.poktroll/cosmovisor/current
+                echo "Successfully applied testnet-alpha mitigation"
+            fi
+        fi
+    fi
 else
     echo "NETWORK_NAME variable not set. Please set it to 'testnet-alpha', 'testnet-beta', or 'mainnet'."
     exit 1

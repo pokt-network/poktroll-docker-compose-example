@@ -12,8 +12,17 @@ set -e
 # Read the seeds from the genesis.seeds file
 export SEEDS=$(cat "$DAEMON_HOME/config/genesis.seeds")
 
+# Add skip-upgrades flag for testnet-alpha
+EXTRA_FLAGS=""
+if [ "$NETWORK_NAME" = "testnet-alpha" ]; then
+    # TODO(@okdas): move this into the separate file in `genesis` repo like we do this for seeds. That way, we can
+    # automate this in the future for all networks.
+    EXTRA_FLAGS="--unsafe-skip-upgrades=83725"
+fi
+
 # Start the binary via Cosmovisor
 exec cosmovisor run start \
   --p2p.external-address="${NODE_HOSTNAME}:26656" \
   --log_level="${POKTROLLD_LOG_LEVEL}" \
-  --p2p.seeds="${SEEDS}"
+  --p2p.seeds="${SEEDS}" \
+  ${EXTRA_FLAGS}
