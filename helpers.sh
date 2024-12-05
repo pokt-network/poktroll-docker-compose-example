@@ -103,3 +103,8 @@ function show_faucet_url() {
         echo "🪙 Token Faucet: $FAUCET_URL"
     fi
 }
+
+export_priv_key_hex() {
+    local key_type="$1"
+    yes | docker exec -i full-node poktrolld keys export "$key_type" --unsafe --unarmored-hex | tail -n1 | tr -d '\r'
+}

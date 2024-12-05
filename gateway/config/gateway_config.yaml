@@ -13,5 +13,5 @@ shannon_config:
       - YOUR_OWNED_APP_PRIVATE_KEY
 
 services:
-  "0021":
-    alias: "eth-mainnet"
+  "F00C":
+    alias: "eth"
