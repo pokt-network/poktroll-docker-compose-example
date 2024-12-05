@@ -7,7 +7,7 @@ pocket_node:
   query_node_grpc_url: tcp://full-node:9090
   tx_node_rpc_url: tcp://full-node:26657
 suppliers:
-  - service_id: "0021" # 0021 is an Ethereum mainnet service ID. Other legacy IDs: https://docs.pokt.network/reference/supported-chains
+  - service_id: "F00C" # F00C is an Ethereum mainnet service ID. Other legacy IDs: https://docs.pokt.network/reference/supported-chains
     service_config:
       backend_url: "" # Ethereum mainnet RPC endpoint to forward relays to. E.g. http://etherium-node:8547/
       publicly_exposed_endpoints:
