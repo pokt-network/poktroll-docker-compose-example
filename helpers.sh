@@ -75,25 +75,6 @@ function clear_all_node_data() {
     fi
 }
 
-function path_prepare_config() {
-    echo """
-shannon_config:
-  full_node_config:
-    rpc_url: ${NODE_HOSTNAME}:26657
-    grpc_config:
-      host_port: ${NODE_HOSTNAME}:9090
-      insecure: true
-    gateway_address: \"${GATEWAY_ADDR}\"
-    gateway_private_key: \"Run: poktrolld keys export --unsafe --unarmored-hex  gateway\"
-    delegated_app_addresses:
-      - \"${APPLICATION_ADDR}\"
-
-services:
-  \"0021\":
-    alias: \"eth-mainnet\"
-"""
-}
-
 function show_faucet_url() {
     # Check network name first
     check_network_name || return 1

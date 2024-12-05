@@ -1,21 +1,17 @@
-# Please refer to https://dev.poktroll.com/operate/configs/appgate_server_config for documentation.
-# Pocket node URL that exposes CometBFT JSON-RPC API.
-# This can be used by the Cosmos client SDK, event subscriptions, etc...
-query_node_rpc_url: tcp://full-node:26657
-# Pocket node URL that exposes the Cosmos gRPC service, dedicated to querying purposes.
-query_node_grpc_url: tcp://full-node:9090
-# The name of the key (in the keyring) that will be used to sign relays
-signing_key: key-for-gateway
-# Whether the server should sign all incoming requests with its own ring (set to false for gateways)
-self_signing: false
-# The host and port that the appgate server will listen on
-listening_endpoint: http://0.0.0.0:84
-# Prometheus exporter configuration
-metrics:
-  # Turn on/off the metrics exporter
-  enabled: true
-  # The address that the metrics exporter will listen on. Can be just a port, or host:port
-  addr: :9090
-pprof:
-  enabled: false
-  addr: :6060
+shannon_config:
+  full_node_config:
+    rpc_url: http://full-node:26657
+    grpc_config:
+      host_port: full-node:9090
+      insecure: true
+    lazy_mode: false
+  gateway_config:
+    gateway_mode: centralized
+    gateway_address: YOUR_PATH_GATEWAY_ADDRESS
+    gateway_private_key_hex: YOUR_PATH_GATEWAY_PRIVATE_KEY
+    owned_apps_private_keys_hex:
+      - YOUR_OWNED_APP_PRIVATE_KEY
+
+services:
+  "0021":
+    alias: "eth-mainnet"
