@@ -10,21 +10,13 @@ scrape_configs:
           # For backwards-compatibility with LocalNet dashboard
           container: relayminer
 
-  - job_name: 'appgate'
-    scheme: http
-    static_configs:
-      - targets: ['appgate:9090']
-        labels:
-          # For backwards-compatibility with LocalNet dashboard
-          container: appgate
-
   - job_name: 'gateway'
     scheme: http
     static_configs:
       - targets: ['gateway:9090']
         labels:
           # For backwards-compatibility with LocalNet dashboard
-          container: appgate
+          container: gateway
 
   - job_name: 'full-node'
     scheme: http

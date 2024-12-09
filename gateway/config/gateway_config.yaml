@@ -13,5 +13,6 @@ shannon_config:
       - YOUR_OWNED_APP_PRIVATE_KEY
 
 services:
+  # TODO_TECHDEBT: Replace F00C with the final ethereum serviceID once determined.
   "F00C":
     alias: "eth"

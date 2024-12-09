@@ -12,7 +12,7 @@
             }
         ]
     },
-    "description": "An overarching dashboard that provides a high-level view of the entire infrastructure's health and performance by aggregating key metrics from all actors (Appgate, Gateway, RelayMiner, Full Node). This dashboard is essential for quickly assessing the network's status and identifying any potential issues.",
+    "description": "An overarching dashboard that provides a high-level view of the entire infrastructure's health and performance by aggregating key metrics from all actors (Gateway, RelayMiner, Full Node). This dashboard is essential for quickly assessing the network's status and identifying any potential issues.",
     "editable": true,
     "fiscalYearStartMonth": 0,
     "graphTooltip": 0,
@@ -112,7 +112,7 @@
                 {
                     "expr": "sum by (rpc_type, service_id)(rate(appgateserver_relay_requests_total[1m]))",
                     "interval": "",
-                    "legendFormat": "Appgate {{rpc_type}} {{service_id}}",
+                    "legendFormat": "TODO_TECHDEBT: Replace Appgate metrics with PATH once available {{rpc_type}} {{service_id}}",
                     "refId": "A"
                 },
                 {
@@ -178,12 +178,6 @@
             },
             "pluginVersion": "11.2.0",
             "targets": [
-                {
-                    "expr": "clamp_max(100 * (sum(rate(appgateserver_relay_requests_success_total{job=\"appgate\"}[1m])) / sum(rate(appgateserver_relay_requests_total{job=\"appgate\"}[1m]))), 100)",
-                    "interval": "",
-                    "legendFormat": "AppGate",
-                    "refId": "A"
-                },
                 {
                     "expr": "clamp_max(100 * (sum(rate(appgateserver_relay_requests_success_total{job=\"gateway\"}[1m])) / sum(rate(appgateserver_relay_requests_total{job=\"gateway\"}[1m]))), 100)",
                     "interval": "",
@@ -777,7 +771,7 @@
             "pluginVersion": "11.2.0",
             "targets": [
                 {
-                    "expr": "time() - process_start_time_seconds{job=~\"appgate|gateway|relay-miner|full-node\"}",
+                    "expr": "time() - process_start_time_seconds{job=~\"gateway|relay-miner|full-node\"}",
                     "interval": "",
                     "legendFormat": "{{job}}",
                     "refId": "A"
@@ -978,7 +972,7 @@
             },
             "targets": [
                 {
-                    "expr": "sum by (job)(rate(process_cpu_seconds_total{job=~\"appgate|gateway|relay-miner|full-node\"}[1m]))",
+                    "expr": "sum by (job)(rate(process_cpu_seconds_total{job=~\"gateway|relay-miner|full-node\"}[1m]))",
                     "interval": "",
                     "legendFormat": "{{job}}",
                     "refId": "A"
@@ -1072,7 +1066,7 @@
             },
             "targets": [
                 {
-                    "expr": "go_memstats_alloc_bytes{job=~\"appgate|gateway|relay-miner|full-node\"}",
+                    "expr": "go_memstats_alloc_bytes{job=~\"gateway|relay-miner|full-node\"}",
                     "interval": "",
                     "legendFormat": "{{job}}",
                     "refId": "A"
@@ -1164,7 +1158,7 @@
             },
             "targets": [
                 {
-                    "expr": "go_memstats_heap_alloc_bytes{job=~\"appgate|gateway|relay-miner|full-node\"}",
+                    "expr": "go_memstats_heap_alloc_bytes{job=~\"gateway|relay-miner|full-node\"}",
                     "interval": "",
                     "legendFormat": "{{job}}",
                     "refId": "A"
@@ -1251,7 +1245,7 @@
             },
             "targets": [
                 {
-                    "expr": "go_goroutines{job=~\"appgate|gateway|relay-miner|full-node\"}",
+                    "expr": "go_goroutines{job=~\"gateway|relay-miner|full-node\"}",
                     "interval": "",
                     "legendFormat": "{{job}}",
                     "refId": "A"
@@ -1351,7 +1345,7 @@
             },
             "targets": [
                 {
-                    "expr": "(go_gc_duration_seconds_sum{job=~\"appgate|gateway|relay-miner|full-node\"} / go_gc_duration_seconds_count{job=~\"appgate|gateway|relay-miner|full-node\"})",
+                    "expr": "(go_gc_duration_seconds_sum{job=~\"gateway|relay-miner|full-node\"} / go_gc_duration_seconds_count{job=~\"gateway|relay-miner|full-node\"})",
                     "interval": "",
                     "legendFormat": "{{job}}",
                     "refId": "A"
@@ -1438,7 +1432,7 @@
             },
             "targets": [
                 {
-                    "expr": "process_open_fds{job=~\"appgate|gateway|relay-miner|full-node\"}",
+                    "expr": "process_open_fds{job=~\"gateway|relay-miner|full-node\"}",
                     "interval": "",
                     "legendFormat": "{{job}}",
                     "refId": "A"

@@ -12,7 +12,6 @@ services:
 
       # Necessary to change ownership of the files, as our production image does not run the process under root.
       - ./relayminer:/home/pocket/.poktroll/relayminer
-      - ./appgate:/home/pocket/.poktroll/appgate
       - ./gateway:/home/pocket/.poktroll/gateway
 
   # Full node
@@ -60,6 +59,8 @@ services:
       - ./scripts/start-relayminer.sh:/home/pocket/start-relayminer.sh
 
   # PATH Gateway
+  # TODO_TECHDEBT: Rename the container to be consistent with both LocalNet and
+  # when grafana dashboards once PATH metrics are available.
   gateway:
     image: ${PATH_GATEWAY_IMAGE_REPO}:${PATH_GATEWAY_IMAGE_TAG:-development}
     container_name: gateway

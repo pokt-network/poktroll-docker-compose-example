@@ -11,9 +11,6 @@ relayminer/config/app.toml
 relayminer/config/client.toml
 relayminer/config/config.toml
 relayminer/smt/
-appgate/config/app.toml
-appgate/config/client.toml
-appgate/config/config.toml
 gateway/config/app.toml
 gateway/config/client.toml
 gateway/config/config.toml
