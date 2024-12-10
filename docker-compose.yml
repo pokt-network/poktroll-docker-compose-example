@@ -59,7 +59,7 @@ services:
       - ./scripts/start-relayminer.sh:/home/pocket/start-relayminer.sh
 
   # PATH Gateway
-  # TODO_TECHDEBT: Rename the container to be consistent with both LocalNet and
+  # TODO_TECHDEBT(@okdas): Rename the container to be consistent with both LocalNet and
   # when grafana dashboards once PATH metrics are available.
   gateway:
     image: ${PATH_GATEWAY_IMAGE_REPO}:${PATH_GATEWAY_IMAGE_TAG:-development}

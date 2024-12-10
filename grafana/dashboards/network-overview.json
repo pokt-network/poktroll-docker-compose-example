@@ -112,7 +112,7 @@
                 {
                     "expr": "sum by (rpc_type, service_id)(rate(appgateserver_relay_requests_total[1m]))",
                     "interval": "",
-                    "legendFormat": "TODO_TECHDEBT: Replace Appgate metrics with PATH once available {{rpc_type}} {{service_id}}",
+                    "legendFormat": "TODO_TECHDEBT(@okdas): Replace Appgate metrics with PATH once available {{rpc_type}} {{service_id}}",
                     "refId": "A"
                 },
                 {

@@ -13,6 +13,6 @@ shannon_config:
       - YOUR_OWNED_APP_PRIVATE_KEY
 
 services:
-  # TODO_TECHDEBT: Replace F00C with the final ethereum serviceID once determined.
+  # TODO_TECHDEBT(@Olshansk): Replace F00C with the final ethereum serviceID once determined (or anvil).
   "F00C":
     alias: "eth"
