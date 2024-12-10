@@ -12,7 +12,6 @@ services:
 
       # Necessary to change ownership of the files, as our production image does not run the process under root.
       - ./relayminer:/home/pocket/.poktroll/relayminer
-      - ./appgate:/home/pocket/.poktroll/appgate
       - ./gateway:/home/pocket/.poktroll/gateway
 
   # Full node
@@ -59,38 +58,21 @@ services:
       - ./relayminer:/home/pocket/.poktroll/
       - ./scripts/start-relayminer.sh:/home/pocket/start-relayminer.sh
 
-  # AppGate Server
-  appgate:
-    image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG_OFF_CHAIN:-latest}
-    container_name: appgate
-    entrypoint: ["sh", "/home/pocket/start-appgate.sh"]
-    environment:
-      - APPLICATION_MNEMONIC=${APPLICATION_MNEMONIC}
-    ports:
-      - "85:85" # 85 is the port AppGate Server is configured to listen on in `appgate_server_config.yaml`.
-    restart: unless-stopped
-    depends_on:
-      - full-node
-    volumes:
-      - /etc/ssl/:/etc/ssl/
-      - ./appgate:/home/pocket/.poktroll/
-      - ./scripts/start-appgate.sh:/home/pocket/start-appgate.sh
-
-  # Gateway
+  # PATH Gateway
+  # TODO_TECHDEBT(@okdas): Rename the container to be consistent with both LocalNet and
+  # when grafana dashboards once PATH metrics are available.
   gateway:
-    image: ${POKTROLLD_IMAGE_REPO}:${POKTROLLD_IMAGE_TAG_OFF_CHAIN:-latest}
+    image: ${PATH_GATEWAY_IMAGE_REPO}:${PATH_GATEWAY_IMAGE_TAG:-development}
     container_name: gateway
-    entrypoint: ["sh", "/home/pocket/start-gateway.sh"]
-    environment:
-      - GATEWAY_MNEMONIC=${GATEWAY_MNEMONIC}
     ports:
-      - "84:84" # 84 is the port appgate is configured to run as a gateway to listen on in `gateway_config.yaml`.
+      - "3000:3000"
     restart: unless-stopped
     depends_on:
       - full-node
     volumes:
-      - ./gateway:/home/pocket/.poktroll/
-      - ./scripts/start-gateway.sh:/home/pocket/start-gateway.sh
+      - ./gateway/config/gateway_config.yaml:/app/config/.config.yaml
+    command:
+      - ./path
 
   # Prometheus
   prometheus:
