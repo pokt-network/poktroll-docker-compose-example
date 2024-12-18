@@ -1,6 +1,6 @@
 # Please refer to https://dev.poktroll.com/operate/configs/relayminer_config for documentation.
 default_signing_key_names:
-  - key-for-supplier1
+  - supplier
 smt_store_path: /home/pocket/.poktroll/smt
 pocket_node:
   query_node_rpc_url: tcp://full-node:26657
