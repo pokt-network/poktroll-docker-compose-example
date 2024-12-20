@@ -6,16 +6,17 @@ if [ -z "$SUPPLIER_MNEMONIC" ]; then
     exit 1
 fi
 
-# Check if key "key-for-supplier1" exists
-if poktrolld --keyring-backend=test keys show key-for-supplier1 >/dev/null 2>&1; then
-    echo "Key 'key-for-supplier1' already exists."
-else
-    # Add key "key-for-supplier1" using the mnemonic
-    echo "$SUPPLIER_MNEMONIC" | poktrolld --keyring-backend=test keys add key-for-supplier1 --recover
-    if [ $? -ne 0 ]; then
-        echo "Failed to add key 'key-for-supplier1'. Exiting."
-        exit 1
-    fi
+# Check if key "supplier" exists
+if poktrolld --keyring-backend=test keys show supplier >/dev/null 2>&1; then
+    echo "Key 'supplier' already exists."
+    poktrolld --keyring-backend=test keys delete supplier --yes --force
+fi
+
+# Add key "supplier" using the mnemonic
+echo "$SUPPLIER_MNEMONIC" | poktrolld --keyring-backend=test keys add supplier --recover
+if [ $? -ne 0 ]; then
+    echo "Failed to add key 'supplier'. Exiting."
+    exit 1
 fi
 
 # Execute poktrolld with specified parameters
