@@ -4,7 +4,7 @@ shannon_config:
     grpc_config:
       host_port: full-node:9090
       insecure: true
-    lazy_mode: false
+    lazy_mode: true
   gateway_config:
     gateway_mode: centralized
     gateway_address: YOUR_PATH_GATEWAY_ADDRESS
