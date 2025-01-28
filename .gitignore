@@ -20,3 +20,4 @@ gateway/config/config.toml
 prometheus/data
 grafana/data
 .DS_Store
+tmp

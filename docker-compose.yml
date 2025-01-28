@@ -21,6 +21,7 @@ services:
     entrypoint: ["sh", "/home/pocket/start-poktrolld.sh"]
     environment:
       - NODE_HOSTNAME=${NODE_HOSTNAME}
+      - NETWORK_NAME=${NETWORK_NAME}
       - POKTROLLD_LOG_LEVEL=${POKTROLLD_LOG_LEVEL}
       - DAEMON_NAME=poktrolld
       - DAEMON_HOME=/home/pocket/.poktroll
